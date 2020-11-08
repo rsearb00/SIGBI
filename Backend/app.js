@@ -40,8 +40,8 @@ console.log('Peticion POST con params: ',req.body)
     }
     else {
       var record = result.records[0].get(0).properties.user;
-      res.send(record);
-      console.log('Inicio de sesión correcto', record)
+      res.send({ ok: true });
+      console.log('Inicio de sesión correcto con el usuario ', record)
     }
   })
 });
