@@ -89,13 +89,13 @@ export default {
               console.log(response.data.ok + " Inicio de sesión correcto");
               this.alerta = true;
               this.textoAlerta =
-                "¡Bienvenido " + this.id + "!";
-              /*setTimeout(() => {
+                "¡Bienvenido a TapO'N " + this.id + "!";
+              setTimeout(() => {
                 this.$router.push({
                   name: "Inicio",
                   params: { idUsuario: this.id }
                 });
-              }, 750);*/
+              }, 750);
             } else {
               this.tipoAlerta = "error";
               this.alerta = true;
