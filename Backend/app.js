@@ -31,7 +31,8 @@ console.log('Peticion POST con params: ',req.body)
 
   const resultPromise = session.run(query);
   resultPromise.then(result => {
-    session.close();
+    //No podemos cerrar la sesion porque si no falla
+    //session.close();
 
     if (result.records.length == 0) {
       res.send({ ok: false })
@@ -42,8 +43,6 @@ console.log('Peticion POST con params: ',req.body)
       res.send(record);
       console.log('Inicio de sesión correcto')
     }
-
-
   })
 });
 
