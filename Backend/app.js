@@ -39,9 +39,9 @@ console.log('Peticion POST con params: ',req.body)
       console.log('Inicio de sesión fallido')
     }
     else {
-      var record = result.records[0].get(0).properties.usuario;
+      var record = result.records[0].get(0).properties.user;
       res.send(record);
-      console.log('Inicio de sesión correcto')
+      console.log('Inicio de sesión correcto', record)
     }
   })
 });
