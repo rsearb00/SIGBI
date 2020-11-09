@@ -1,7 +1,9 @@
 <template>
   <v-footer
+  app
     dark
     padless
+    inset
   >
     <v-card
       class="flex"

@@ -3,10 +3,10 @@
     <ToolbarTapON v-bind:idUsuario="idUsuario" />
 
 
-      <v-divider></v-divider>
+    <v-divider></v-divider>
      
  
-    <FooterTapON />
+    <FooterTapON/>
   </v-app>
   
 </template>
