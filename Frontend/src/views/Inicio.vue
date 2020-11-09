@@ -1,31 +1,28 @@
 <template>
   <v-app id="keep">
-    <ToolbarMaristMessage v-bind:idUsuario="idUsuario" />
+    <ToolbarTapON v-bind:idUsuario="idUsuario" />
 
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      clipped
-      color="blue-grey lighten-5"
-    >
-      
-      
+
       <v-divider></v-divider>
      
-    </v-navigation-drawer>
-    
+ 
+    <FooterTapON />
   </v-app>
+  
 </template>
 
 <script>
 
-
+import ToolbarTapON from "@/components/ToolbarTapON";
+import FooterTapON from "@/components/FooterTapON";
 export default {
+
   props: {
     idUsuario: { type: String, default: "ERROR" }
   },
   components: {
-    
+    ToolbarTapON,
+    FooterTapON
   },
   data: () => ({
    
