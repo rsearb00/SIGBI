@@ -1,10 +1,10 @@
 <template>
   <v-app-bar app clipped-left dark color="#4D5E9C">
-
-<v-spacer></v-spacer>
-<v-toolbar-title class="white--text">{{title}} {{ idUsuario }}?</v-toolbar-title>
     <v-spacer></v-spacer>
- 
+    <v-toolbar-title class="white--text"
+      >{{ title }} {{ idUsuario }}?</v-toolbar-title
+    >
+    <v-spacer></v-spacer>
 
     <v-btn
       class="black--text ma-5"
@@ -19,7 +19,7 @@
 <script>
 export default {
   data: () => ({
-   title: "¿Qué te apetece hacer hoy, "
+    title: "¿Qué te apetece hacer hoy, "
   }),
   props: {
     idUsuario: { type: String, default: "ERROR" }
@@ -28,7 +28,7 @@ export default {
   methods: {
     clickeoCerrarSesion: function() {
       this.$router.push("/");
-    },
+    }
   }
 };
 </script>

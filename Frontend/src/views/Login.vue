@@ -11,7 +11,6 @@
               <v-toolbar color="#4D5E9C" dark flat>
                 <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
                 <v-spacer />
-                
               </v-toolbar>
               <v-card-text>
                 <v-form>
@@ -88,8 +87,7 @@ export default {
               this.tipoAlerta = "success";
               console.log(response.data.ok + " Inicio de sesión correcto");
               this.alerta = true;
-              this.textoAlerta =
-                "¡Bienvenido a TapO'N " + this.id + "!";
+              this.textoAlerta = "¡Bienvenido a TapO'N " + this.id + "!";
               setTimeout(() => {
                 this.$router.push({
                   name: "Inicio",

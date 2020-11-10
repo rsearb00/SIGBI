@@ -1,27 +1,12 @@
 <template>
-  <v-footer
-  app
-    dark
-    padless
-    inset
-  >
-    <v-card
-      class="flex"
-      flat
-      tile
-    >
+  <v-footer app dark padless inset>
+    <v-card class="flex" flat tile>
       <v-card-title class="teal">
         <strong class="subheading">¡Síguenos en redes!</strong>
 
         <v-spacer></v-spacer>
 
-        <v-btn
-          v-for="icon in icons"
-          :key="icon"
-          class="mx-4"
-          dark
-          icon
-        >
+        <v-btn v-for="icon in icons" :key="icon" class="mx-4" dark icon>
           <v-icon size="24px">
             {{ icon }}
           </v-icon>
@@ -35,14 +20,9 @@
   </v-footer>
 </template>
 <script>
-  export default {
-    data: () => ({
-      icons: [
-        'mdi-facebook',
-        'mdi-twitter',
-        'mdi-linkedin',
-        'mdi-instagram',
-      ],
-    }),
-  }
+export default {
+  data: () => ({
+    icons: ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"]
+  })
+};
 </script>
