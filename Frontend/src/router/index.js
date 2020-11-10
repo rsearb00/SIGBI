@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "@/views/Login";
 import Inicio from "@/views/Inicio";
+import Tapa from "@/views/Tapa";
+import Personalizada from "@/views/Personalizada";
 
 Vue.use(VueRouter);
 
@@ -15,6 +17,18 @@ const routes = [
     path: "/inicio",
     name: "Inicio",
     component: Inicio,
+    props: true
+  },
+  {
+    path: "/tapa",
+    name: "Tapa",
+    component: Tapa,
+    props: true
+  },
+  {
+    path: "/personalizada",
+    name: "Personalizada",
+    component: Personalizada,
     props: true
   }
 ];

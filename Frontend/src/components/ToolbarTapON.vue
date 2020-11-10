@@ -1,11 +1,14 @@
 <template>
   <v-app-bar app clipped-left dark color="#4D5E9C">
     <v-spacer></v-spacer>
+
     <v-toolbar-title class="white--text"
       >{{ title }} {{ idUsuario }}?</v-toolbar-title
     >
     <v-spacer></v-spacer>
-
+    <v-btn class="black--text ma-5" color="white" @click="clickeoInicio()">
+      <v-icon color="#4D5E9C" left>mdi-home</v-icon>Inicio
+    </v-btn>
     <v-btn
       class="black--text ma-5"
       color="white"
@@ -26,6 +29,12 @@ export default {
   },
   components: {},
   methods: {
+    clickeoInicio: function() {
+      this.$router.push({
+        name: "Inicio",
+        params: { idUsuario: this.idUsuario }
+      });
+    },
     clickeoCerrarSesion: function() {
       this.$router.push("/");
     }
