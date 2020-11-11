@@ -38,53 +38,61 @@ import ToolbarTapON from "@/components/ToolbarTapON";
 import FooterTapON from "@/components/FooterTapON";
 export default {
   props: {
-    idUsuario: { type: String, default: "ERROR" }
+    idUsuario: { type: String, default: "ERROR" },
   },
   components: {
     ToolbarTapON,
-    FooterTapON
+    FooterTapON,
   },
   data: () => ({
     tapas: [],
-    bares: []
+    bares: [],
+    //tapasSinFiltro: [],
   }),
   methods: {
-    tapa: function() {
+    tapa: function () {
       this.$router.push({
         name: "Tapa",
-        params: { idUsuario: this.idUsuario }
+        params: { idUsuario: this.idUsuario },
       });
     },
-    personalizada: function() {
+    personalizada: function () {
       this.$router.push({
         name: "Personalizada",
-        params: { idUsuario: this.idUsuario }
+        params: { idUsuario: this.idUsuario },
       });
     },
-    recomendacion: function() {
+    recomendacion: function () {
       this.$router.push({
         name: "Recomendacion",
-        params: { idUsuario: this.idUsuario }
+        params: { idUsuario: this.idUsuario },
       });
     },
-    random: function() {
+    random: function () {
       this.$router.push({
         name: "Random",
-        params: { idUsuario: this.idUsuario }
+        params: { idUsuario: this.idUsuario },
       });
     },
-    cargarTapas: function() {},
-    cargarBares: function() {
+    cargarTapas: function () {},
+    cargarBares: function () {
       console.log("Intento de mostrar los bares");
       axios
         .post("http://localhost:3000/baresVisitados", {
-          user: this.id
+          user: this.id,
         })
-        .then(response => {
+        .then((response) => {
           console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
-            this.bares = response.data.datos;
+           /* this.tapasSinFiltro = response.data.datos;
+            this.tapasSinFiltro.forEach((tapa, i) => {
+              this.tapas.push(this.tapasSinFiltro[i]._fields[i]);
+            });
+            /*for (var i = 0; i < tapasSinFiltro.length; i++) {
+          
+          this.tapas.push(tapasSinFiltro[i]._fields[i])*/
+            //}
             /* this.usuarios.forEach((user, i) => {
               if (user.id === this.idUsuario) {
                 this.usuarios.splice(i, 1);
@@ -95,13 +103,13 @@ export default {
             console.log(response.data + " Fallo en la obtención de los bares");
           }
         })
-        .catch(error => {
+        .catch((error) => {
           //Error al recoger los usuarios
           console.log(error);
         });
-    }
+    },
   },
-  mounted: function() {}
+  mounted: function () {},
 };
 </script>
 

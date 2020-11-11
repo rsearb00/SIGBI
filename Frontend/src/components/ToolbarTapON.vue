@@ -2,7 +2,7 @@
   <v-app-bar app clipped-left dark color="#4D5E9C">
     <v-spacer></v-spacer>
 
-    <v-toolbar-title class="white--text"
+    <v-toolbar-title class="white--text" 
       >{{ title }} {{ idUsuario }}?</v-toolbar-title
     >
     <v-spacer></v-spacer>
