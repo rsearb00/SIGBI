@@ -35,7 +35,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn dark color="#4D5E9C" @click="clickeo()">Entrar</v-btn>
+                <v-btn dark color="#4D5E9C" @click="registrarse()">Registrarse</v-btn>
+                <v-btn dark color="#4D5E9C" @click="iniciarSesion()">Iniciar Sesión</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -59,7 +60,7 @@ export default {
     textoAlerta: ""
   }),
   methods: {
-    clickeo: function() {
+    iniciarSesion: function() {
       this.alerta = false;
       if (this.id == "" && this.contrasenya == "") {
         this.tipoAlerta = "error";

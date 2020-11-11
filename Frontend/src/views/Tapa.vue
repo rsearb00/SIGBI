@@ -1,52 +1,95 @@
 <template>
   <v-app id="keep">
     <ToolbarTapON v-bind:idUsuario="idUsuario" />
-    <v-card class="mx-auto" min-width="600">
-      <v-toolbar color="purple" dark>
-        <v-text-field
-          outlined
-          label="Busca tu tapa"
-          append-icon="mdi-magnify"
-        ></v-text-field>
-      </v-toolbar>
+    <v-container>
+     <v-row no-gutters>
+      <div class="col">
+      <v-card class="pa-2">
+        <v-toolbar color="purple" dark>
+          <v-text-field
+            outlined
+            label="Busca tu tapa"
+            v-model="buscar"
+            append-icon="mdi-magnify"
+           @keyup.enter="buscarTapa()"
+          ></v-text-field>
+        </v-toolbar>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-list flat>
-        <v-subheader>Tapas</v-subheader>
+        <v-list flat>
+          <v-subheader>Tapas posibles</v-subheader>
 
-        <v-list-item-group
-          v-model="tapasSeleccionadas"
-          multiple
-          active-class="pink--text"
-        >
-          <template v-for="(tapa, i) in tapas">
-            <v-list-item :key="`item-${i}`" :value="tapa">
-              <template v-slot:default="{ active, toggle }">
-                <v-list-item-content>
-                  <v-list-item-title v-text="tapa"></v-list-item-title>
-                </v-list-item-content>
+          <v-list-item-group
+            v-model="tapasSeleccionadas"
+            multiple
+            active-class="pink--text"
+          >
+            <template v-for="(tapa, i) in tapas">
+              <v-list-item :key="`item-${i}`" :value="tapa">
+                <template v-slot:default="{ active, toggle }">
+                  <v-list-item-content>
+                    <v-list-item-title v-text="tapa"></v-list-item-title>
+                  </v-list-item-content>
 
-                <v-list-item-action>
-                  <v-checkbox
-                    :input-value="active"
-                    :true-value="tapa"
-                    color="#4D5E9C"
-                    @click="toggle"
-                  ></v-checkbox>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-          </template>
-        </v-list-item-group>
-      </v-list>
-      <v-fab-transition>
-        <v-btn color="#4D5E9C" dark absolute right @click="crearConversacion()">
-          <v-icon>mdi-send</v-icon>
-        </v-btn>
-      </v-fab-transition>
-    </v-card>
+                  <v-list-item-action>
+                    <v-checkbox
+                      :input-value="active"
+                      :true-value="tapa"
+                      color="#4D5E9C"
+                      @click="toggle"
+                    ></v-checkbox>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+            </template>
+          </v-list-item-group>
+        </v-list>
+       
+      </v-card>
+      </div>
+<div class="col">
+         <v-card class="pa-2">
+        <v-toolbar color="purple" dark>
+          <v-toolbar-title>Tapas seleccionadas</v-toolbar-title>
+        </v-toolbar>
 
+        <v-divider></v-divider>
+
+        <v-list flat>
+
+          <v-list-item-group
+          
+            active-class="pink--text"
+          >
+            <template v-for="(tapaS, i) in tapasSeleccionadas">
+              <v-list-item :key="`item-${i}`" :value="tapaS">
+                
+                  <v-list-item-content>
+                    <v-list-item-title v-text="tapaS"></v-list-item-title>
+                  </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-item-group>
+        </v-list>
+        <v-fab-transition>
+          <v-btn
+            color="#4D5E9C"
+            dark
+            absolute
+            right
+            fab
+            bottom
+            @click="buscarBares()"
+          >
+            <v-icon>mdi-send</v-icon>
+          </v-btn>
+        </v-fab-transition>
+      </v-card>
+</div>
+      
+    </v-row>
+    </v-container>
     <FooterTapON />
   </v-app>
 </template>
@@ -158,6 +201,7 @@ export default {
     FooterTapON,
   },
   data: () => ({
+    buscar:"",
     items: [],
     tapas: [],
     bares: [],
@@ -171,6 +215,17 @@ export default {
   methods: {
     buscarBares: function () {
       //
+    },
+    buscarTapa: function() {
+      //Funciona
+      this.buscar="Ha pulsado enter";
+      console.log("Ha pulsado enter con valor de búsqueda: ",this.buscar)
+    },
+    //Si el campo está vacío
+    buscarAllTapas: function() {
+      //Funciona
+      this.buscar="Ha pulsado enter";
+      console.log("Ha pulsado enter con valor de búsqueda: ",this.buscar)
     },
     vuelvePrincipal: function () {
       this.$router.push({
