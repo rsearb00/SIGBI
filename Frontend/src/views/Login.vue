@@ -11,6 +11,12 @@
               <v-toolbar color="#4D5E9C" dark flat>
                 <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
                 <v-spacer />
+                <v-img
+                  :src="require(`@/assets/LogoTapON.png`)"
+                  alt
+                  class="shrink mr-2"
+                  width="150"
+                />
               </v-toolbar>
               <v-card-text>
                 <v-form>

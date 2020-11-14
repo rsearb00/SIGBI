@@ -1,7 +1,13 @@
 <template>
   <v-app-bar app clipped-left dark color="#4D5E9C">
+    
+<v-img
+      :src="require(`@/assets/LogoTapON.png`)"
+      alt
+      class="shrink mr-2"
+      width="150"
+    />
     <v-spacer></v-spacer>
-
     <v-toolbar-title class="white--text" 
       >{{ title }} {{ idUsuario }}?</v-toolbar-title
     >
