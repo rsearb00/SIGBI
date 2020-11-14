@@ -2,93 +2,89 @@
   <v-app id="keep">
     <ToolbarTapON v-bind:idUsuario="idUsuario" />
     <v-container>
-     <v-row no-gutters>
-      <div class="col">
-      <v-card class="pa-2">
-        <v-toolbar color="purple" dark>
-          <v-text-field
-            outlined
-            label="Busca tu tapa"
-            v-model="buscar"
-            append-icon="mdi-magnify"
-           @keyup.enter="buscarTapa()"
-          ></v-text-field>
-        </v-toolbar>
+      <v-row no-gutters>
+        <div class="col">
+          <v-card class="pa-2">
+            <v-toolbar color="purple" dark>
+              <v-text-field
+                outlined
+                label="Busca tu tapa"
+                v-model="buscar"
+                append-icon="mdi-magnify"
+                @keyup.enter="buscarTapa()"
+              ></v-text-field>
+            </v-toolbar>
 
-        <v-divider></v-divider>
+            <v-divider></v-divider>
 
-        <v-list flat>
-          <v-subheader>Tapas posibles</v-subheader>
+            <v-list flat>
+              <v-subheader>Tapas seleccionables</v-subheader>
 
-          <v-list-item-group
-            v-model="tapasSeleccionadas"
-            multiple
-            active-class="pink--text"
-          >
-            <template v-for="(tapa, i) in tapas">
-              <v-list-item :key="`item-${i}`" :value="tapa">
-                <template v-slot:default="{ active, toggle }">
-                  <v-list-item-content>
-                    <v-list-item-title v-text="tapa"></v-list-item-title>
-                  </v-list-item-content>
+              <v-list-item-group
+                v-model="tapasSeleccionadas"
+                multiple
+                active-class="pink--text"
+              >
+                <template v-for="(tapa, i) in tapas">
+                  <v-list-item :key="`item-${i}`" :value="tapa">
+                    <template v-slot:default="{ active, toggle }">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="tapa"></v-list-item-title>
+                      </v-list-item-content>
 
-                  <v-list-item-action>
-                    <v-checkbox
-                      :input-value="active"
-                      :true-value="tapa"
-                      color="#4D5E9C"
-                      @click="toggle"
-                    ></v-checkbox>
-                  </v-list-item-action>
+                      <v-list-item-action>
+                        <v-checkbox
+                          :input-value="active"
+                          :true-value="tapa"
+                          color="#4D5E9C"
+                          @click="active, toggle"
+                        ></v-checkbox>
+                      </v-list-item-action>
+                    </template>
+                  </v-list-item>
                 </template>
-              </v-list-item>
-            </template>
-          </v-list-item-group>
-        </v-list>
-       
-      </v-card>
-      </div>
-<div class="col">
-         <v-card class="pa-2">
-        <v-toolbar color="purple" dark>
-          <v-toolbar-title>Tapas seleccionadas</v-toolbar-title>
-        </v-toolbar>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </div>
+        <div class="col">
+          <v-alert :type="tipoAlerta" v-if="alerta" dismissible>{{
+            textoAlerta
+          }}</v-alert>
+          <v-card class="pa-2">
+            <v-toolbar color="purple" dark>
+              <v-toolbar-title>Tapas seleccionadas</v-toolbar-title>
+            </v-toolbar>
 
-        <v-divider></v-divider>
+            <v-divider></v-divider>
 
-        <v-list flat>
-
-          <v-list-item-group
-          
-            active-class="pink--text"
-          >
-            <template v-for="(tapaS, i) in tapasSeleccionadas">
-              <v-list-item :key="`item-${i}`" :value="tapaS">
-                
-                  <v-list-item-content>
-                    <v-list-item-title v-text="tapaS"></v-list-item-title>
-                  </v-list-item-content>
-              </v-list-item>
-            </template>
-          </v-list-item-group>
-        </v-list>
-        <v-fab-transition>
-          <v-btn
-            color="#4D5E9C"
-            dark
-            absolute
-            right
-            fab
-            bottom
-            @click="buscarBares()"
-          >
-            <v-icon>mdi-send</v-icon>
-          </v-btn>
-        </v-fab-transition>
-      </v-card>
-</div>
-      
-    </v-row>
+            <v-list flat>
+              <v-list-item-group active-class="pink--text">
+                <template v-for="(tapaS, i) in tapasSeleccionadas">
+                  <v-list-item :key="`item-${i}`" :value="tapaS">
+                    <v-list-item-content>
+                      <v-list-item-title v-text="tapaS"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
+            </v-list>
+            <v-fab-transition>
+              <v-btn
+                color="#4D5E9C"
+                dark
+                absolute
+                right
+                fab
+                bottom
+                @click="buscarBares()"
+              >
+                <v-icon>mdi-send</v-icon>
+              </v-btn>
+            </v-fab-transition>
+          </v-card>
+        </div>
+      </v-row>
     </v-container>
     <FooterTapON />
   </v-app>
@@ -201,7 +197,7 @@ export default {
     FooterTapON,
   },
   data: () => ({
-    buscar:"",
+    buscar: "",
     items: [],
     tapas: [],
     bares: [],
@@ -214,18 +210,58 @@ export default {
   }),
   methods: {
     buscarBares: function () {
-      //
+      //Primero comprobamos que se ha seleccionado al menos una tapa
+      if (this.tapasSeleccionadas.length == 0) {
+        this.tipoAlerta = "error";
+        this.alerta = true;
+        this.textoAlerta = "Selecione al menos una tapa";
+      } else {
+        console.log("Intento de buscar bares");
+        axios
+          .post("http://localhost:3000/buscarBares", {
+            tapas: this.tapasSeleccionadas,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              this.bares = response.data.datos;
+              this.tipoAlerta = "success";
+              this.alerta = true;
+              this.textoAlerta = "¡Bares encontrados!";
+
+              console.log("Se han encontrado los bares");
+              setTimeout(() => {
+                this.$router.push({
+                  name: "Bares",
+                  params: { idUsuario: this.idUsuario, bares: this.bares },
+                });
+              }, 750);
+            } else {
+              this.tipoAlerta = "error";
+              this.alerta = true;
+              this.textoAlerta =
+                "No se han encontrado bares con las tapas seleccionadas";
+
+              console.log("Fallo en la búsqueda de los bares");
+            }
+          })
+          .catch((error) => {
+            //Error al recoger los bares
+            console.log(error);
+          });
+      }
     },
-    buscarTapa: function() {
+    buscarTapa: function () {
       //Funciona
-      this.buscar="Ha pulsado enter";
-      console.log("Ha pulsado enter con valor de búsqueda: ",this.buscar)
+      this.buscar = "Ha pulsado enter";
+      console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
     },
     //Si el campo está vacío
-    buscarAllTapas: function() {
+    buscarAllTapas: function () {
       //Funciona
-      this.buscar="Ha pulsado enter";
-      console.log("Ha pulsado enter con valor de búsqueda: ",this.buscar)
+      this.buscar = "Ha pulsado enter";
+      console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
     },
     vuelvePrincipal: function () {
       this.$router.push({
@@ -235,6 +271,7 @@ export default {
     },
   },
   mounted: function () {
+    //Obtenemos las tapas por pantalla al cargar la página
     console.log("Intento de mostrar las tapas");
     axios
       .post("http://localhost:3000/tapas", {})
@@ -243,18 +280,13 @@ export default {
         //Llamada exitosa
         if (response.data.ok == true) {
           this.tapas = response.data.datos;
-          /* this.usuarios.forEach((user, i) => {
-              if (user.id === this.idUsuario) {
-                this.usuarios.splice(i, 1);
-              }
-            });*/
           console.log(response.data + " Tapas recibidas");
         } else {
           console.log(response.data + " Fallo en la obtención de las tapas");
         }
       })
       .catch((error) => {
-        //Error al recoger los usuarios
+        //Error al recoger las tapas
         console.log(error);
       });
   },

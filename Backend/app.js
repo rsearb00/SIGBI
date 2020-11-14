@@ -65,8 +65,8 @@ app.post('/tapas', function (req, res) {
     }
     else {
       var tapas = result.records;
-      var tapasFiltro=[];
-      
+      var tapasFiltro = [];
+
       //Sacar el tipo de tapa -> devuelve Label: [values]
       for (var i = 0; i < tapas.length; i++) {
         console.log('Tapa: ', tapas[i]._fields[0])
@@ -101,27 +101,70 @@ app.post('/tapas', function (req, res) {
     }
 
   })
+});
 
 
-  /*if (Object.keys(req.body).length === 0) {
-      models.Usuarios.findAll({}
-      ).then((data) => {
-          res.json({ ok: true, datos: data });
-      }).catch((val) => {
-          res.json({ ok: false, error: val.name });
-      });
-  } else {
-      // Devolver el usuario consultado
-      models.Usuarios.findAll(
-          {
-              where: req.body
-          }
-      ).then((data) => {
-          res.json({ ok: true, datos: data });
-      }).catch((val) => {
-          res.json({ ok: false, error: val.name });
-      });
-    }*/
+//Buscar los bares en funcion de las tapas seleccionadas
+app.post('/buscarBares', function (req, res) {
+  // Devolver todos si se para un json vacio
+  console.log('Peticion de buscar bares con las tapas: ', req.body)
+  var tapas = req.body.tapas;
+  var bares = [];
+  //Primera prueba: devolvemos todos los bares que tienen alguna de las tapas seleccionadas porque tenemos pocos en la base
+  //MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN ['Picadillo', 'Morcilla', 'Cangrejo']  RETURN b as Bar
+
+  //Para coger solo los que tienen las tapas seleccionadas, ejemplo con 3 tapas:
+  //MATCH (b:Bar)-[:HASTAPA]->(t1:Tapa)
+  //MATCH (b)-[:HASTAPA]->(t2:Tapa)
+  //MATCH (b)-[:HASTAPA]->(t3:Tapa)
+  //MATCH (b)-[:HASTAPA]->(t:Tapa)
+  //WHERE t1.tipoTapa = 'Picadillo' AND t2.tipoTapa='Morcilla' AND t3.tipoTapa ='Cangrejo' RETURN b,t1,t2,t3,t
+
+  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
+  console.log("Query parcial: ", query)
+  for (var i = 0; i < tapas.length; i++) {
+    if (i + 1 < tapas.length) {
+      query = query.concat("'" + tapas[i] + "',");
+    }
+    else if (i+1==tapas.length) {
+      query = query.concat("'" + tapas[i] + "'");
+    }
+  }
+  console.log("Query prefinal: ", query)
+  query = query.concat("] RETURN b as Bar");
+  console.log("Query final: ", query)
+
+
+  const resultPromise = session.run(query).subscribe({
+    onNext: function (record) {
+      var bar = record.get("Bar").properties;
+      bares.push(bar);
+    },
+    onCompleted: function (bares) {
+      if (bares.length == 0) {
+        res.send({ ok: false })
+        console.log('No se han obtenido los bares')
+      }
+      else {
+        res.json({ ok: true, datos: bares });
+        console.log('Bares obtenidos correctamente')
+        for (var i = 0; i < bares.length; i++) {
+          console.log('Bar: ', bares[i].name)
+        }
+      }
+    },
+    onError: function (error) {
+      console.log(error);
+    }
+  });
+
+});
+
+//Método que agrega un bar a la lista de mis bares
+app.post('/agregarBares', function (req, res) {
+  // Devolver todos si se para un json vacio
+
+
 });
 
 

@@ -4,6 +4,7 @@ import Login from "@/views/Login";
 import Inicio from "@/views/Inicio";
 import Tapa from "@/views/Tapa";
 import Personalizada from "@/views/Personalizada";
+import Bares from "@/views/Bares";
 
 Vue.use(VueRouter);
 
@@ -29,6 +30,12 @@ const routes = [
     path: "/personalizada",
     name: "Personalizada",
     component: Personalizada,
+    props: true
+  },
+  {
+    path: "/bares",
+    name: "Bares",
+    component: Bares,
     props: true
   }
 ];
