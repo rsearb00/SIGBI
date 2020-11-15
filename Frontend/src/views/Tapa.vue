@@ -205,7 +205,6 @@ export default {
     alerta: false,
     tipoAlerta: "",
     textoAlerta: "",
-    nombreGrupo: "",
     ids: [],
   }),
   methods: {
@@ -263,12 +262,6 @@ export default {
       this.buscar = "Ha pulsado enter";
       console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
     },
-    vuelvePrincipal: function () {
-      this.$router.push({
-        name: "Inicio",
-        params: { idUsuario: this.idUsuario },
-      });
-    },
   },
   mounted: function () {
     //Obtenemos las tapas por pantalla al cargar la página
@@ -280,9 +273,9 @@ export default {
         //Llamada exitosa
         if (response.data.ok == true) {
           this.tapas = response.data.datos;
-          console.log(response.data + " Tapas recibidas");
+          console.log(response.data.datos + " Tapas recibidas");
         } else {
-          console.log(response.data + " Fallo en la obtención de las tapas");
+          console.log(response.data.datos + " Fallo en la obtención de las tapas");
         }
       })
       .catch((error) => {

@@ -126,31 +126,65 @@ app.post('/buscarBares', function (req, res) {
     if (i + 1 < tapas.length) {
       query = query.concat("'" + tapas[i] + "',");
     }
-    else if (i+1==tapas.length) {
+    else if (i + 1 == tapas.length) {
       query = query.concat("'" + tapas[i] + "'");
     }
   }
   console.log("Query prefinal: ", query)
-  query = query.concat("] RETURN b as Bar");
+  query = query.concat("] RETURN DISTINCT b as Bar");
   console.log("Query final: ", query)
 
 
   const resultPromise = session.run(query).subscribe({
     onNext: function (record) {
       var bar = record.get("Bar").properties;
-      bares.push(bar);
+      if (bar.name != undefined) {
+        if (bar.address == undefined) {
+          bar.address = "No tiene"
+        }
+        if (bar.telephone == undefined) {
+          bar.telephone = "No tiene"
+        }
+        if (bar.web == undefined) {
+          bar.web = "No tiene"
+        }
+        if (bar.perros == undefined) {
+          bar.perros = "No acepta"
+        }
+        if (bar.futbolin == undefined) {
+          bar.futbolin = "No tiene"
+        }
+        if (bar.sidra == undefined) {
+          bar.sidra = "No tiene"
+        }
+        if (bar.cervezaArtesana == undefined) {
+          bar.cervezaArtesana = "No tiene"
+        }
+        if (bar.despedidas == undefined) {
+          bar.despedidas = "No tiene"
+        }
+        if (bar.futbol == undefined) {
+          bar.futbol = "No tiene"
+        }
+        bares.push(bar);
+      }
     },
-    onCompleted: function (bares) {
+    onCompleted: function () {
       if (bares.length == 0) {
         res.send({ ok: false })
         console.log('No se han obtenido los bares')
       }
       else {
+
+        console.log('Se han encontrado ' + bares.length + ' bares')
+        for (var i = 0; i < bares.length; i++) {
+          console.log("Bar: " + bares[i].futbol)
+          console.log("Bar: " + bares[i].perros)
+          console.log("Bar: " + bares[i].despedidas)
+        }
         res.json({ ok: true, datos: bares });
         console.log('Bares obtenidos correctamente')
-        for (var i = 0; i < bares.length; i++) {
-          console.log('Bar: ', bares[i].name)
-        }
+
       }
     },
     onError: function (error) {
@@ -161,10 +195,21 @@ app.post('/buscarBares', function (req, res) {
 });
 
 //Método que agrega un bar a la lista de mis bares
-app.post('/agregarBares', function (req, res) {
+app.post('/agregarBar', function (req, res) {
   // Devolver todos si se para un json vacio
+  var bar = req.body.bar;
+  var user = req.body.user;
+  console.log('Peticion de añadir el bar: ', req.body)
 
+  var query = "MATCH (n:Person), (b:Bar)  WHERE n.user='" + user + "' AND b.name='" + bar + "' CREATE (n)-[:HASBAR]->(b)";
 
+  console.log('Query: ',query)
+
+  const resultPromise = session.run(query);
+  resultPromise.then(result => {
+    res.json({ ok: true })
+    console.log('Se ha creado la relación')
+  })
 });
 
 
