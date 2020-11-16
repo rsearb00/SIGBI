@@ -9,7 +9,7 @@
             }}</v-alert>
             <v-card class="elevation-12">
               <v-toolbar color="#4D5E9C" dark flat>
-                <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
+                <v-toolbar-title>Registro</v-toolbar-title>
                 <v-spacer />
                 <v-img
                   :src="require(`@/assets/LogoTapON.png`)"
@@ -21,13 +21,19 @@
               <v-card-text>
                 <v-form>
                   <v-text-field
-                    label="Usuario"
+                    label="Nombre de Usuario"
                     name="login"
                     prepend-icon="mdi-account"
                     type="text"
                     v-model="id"
                   />
-
+                  <v-text-field
+                    label="Nombre Completo"
+                    name="login"
+                    prepend-icon="mdi-account"
+                    type="text"
+                    v-model="nombreCompleto"
+                  />
                   <v-text-field
                     id="password"
                     label="Contraseña"
@@ -41,11 +47,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn dark color="#4D5E9C" @click="registrarse()"
-                  >Registrarse</v-btn
-                >
-                <v-btn dark color="#4D5E9C" @click="iniciarSesion()"
-                  >Iniciar Sesión</v-btn
+                <v-btn dark color="#4D5E9C" @click="crearUsuario()"
+                  >Registrarme</v-btn
                 >
               </v-card-actions>
             </v-card>
@@ -65,56 +68,60 @@ export default {
   data: () => ({
     id: "",
     contrasenya: "",
+    nombreCompleto: "",
     alerta: false,
     tipoAlerta: "",
     textoAlerta: "",
   }),
   methods: {
-    registrarse: function () {
+    iniciarSesion: function () {
       this.$router.push({
-        name: "Registro",
+        name: "Login",
       });
     },
-    iniciarSesion: function () {
-      this.alerta = false;
-      if (this.id == "" && this.contrasenya == "") {
+    crearUsuario: function () {
+      if (
+        this.id == "" &&
+        this.contrasenya == "" &&
+        this.nombreCompleto == ""
+      ) {
         this.tipoAlerta = "error";
         this.alerta = true;
-        this.textoAlerta = "Por favor, introduce usuario y contraseña";
-      } else if (this.id == "") {
+        this.textoAlerta =
+          "Por favor, introduce los datos para crear al usuario";
+      } else if (
+        this.id == "" ||
+        this.contrasenya == "" ||
+        this.nombreCompleto == ""
+      ) {
         this.tipoAlerta = "error";
         this.alerta = true;
-
-        this.textoAlerta = "Por favor, introduce tu usuario";
-      } else if (this.contrasenya == "") {
-        this.tipoAlerta = "error";
-        this.alerta = true;
-        this.textoAlerta = "Por favor, introduce tu contraseña";
+        this.textoAlerta = "Por favor, introduce los datos que faltan";
       } else {
-        console.log("Intento de inicio de sesión");
+        console.log("Intento de crear el usuario");
         axios
-          .post("http://localhost:3000/login", {
+          .post("http://localhost:3000/registro", {
             user: this.id,
             password: this.contrasenya,
+            name: this.nombreCompleto,
           })
           .then((response) => {
             //Llamada exitosa
             if (response.data.ok) {
               this.tipoAlerta = "success";
-              console.log(response.data.ok + " Inicio de sesión correcto");
+              console.log(response.data.ok + " creado el usuario con éxito");
               this.alerta = true;
-              this.textoAlerta = "¡Bienvenido a TapO'N " + this.id + "!";
+              this.textoAlerta = "¡Usuario " + this.id + " creado!";
               setTimeout(() => {
                 this.$router.push({
-                  name: "Inicio",
-                  params: { idUsuario: this.id },
+                  name: "Login",
                 });
-              }, 750);
+              }, 1000);
             } else {
               this.tipoAlerta = "error";
               this.alerta = true;
-              this.textoAlerta = "Los datos introducidos son incorrectos";
-              console.log(response.data.ok + " Fallo en el inicio de sesión");
+              this.textoAlerta = "Fallo en el registro";
+              console.log(response.data.ok + " Fallo en el registro");
             }
           })
           .catch((alerta) => {

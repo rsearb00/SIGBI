@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "@/views/Login";
+import Registro from "@/views/Registro";
 import Inicio from "@/views/Inicio";
 import Tapa from "@/views/Tapa";
 import Personalizada from "@/views/Personalizada";
@@ -13,6 +14,11 @@ const routes = [
     path: "/",
     name: "Login",
     component: Login
+  },
+  {
+    path: "/registro",
+    name: "Registro",
+    component: Registro
   },
   {
     path: "/inicio",

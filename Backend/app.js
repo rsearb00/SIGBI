@@ -48,7 +48,26 @@ app.post("/login", function (req, res) {
 });
 
 //Registro de usuario nuevo
+app.post('/registro', function (req, res) {
+  // Devolver todos si se para un json vacio
+  var user = req.body.user;
+  var password = req.body.password;
+  var name = req.body.name;
 
+  console.log('Peticion de crear el usuario: ', req.body)
+
+  //Ejemplo: CREATE (:Person{name:"Pepe Navarro", user:"Pepe", password:"Pepe123"})
+  var query = "CREATE (n:Person{name:'"+name+"', user:'"+user+"', password:'"+password+"'})";
+
+
+  console.log('Query: ', query)
+
+  const resultPromise = session.run(query);
+  resultPromise.then(result => {
+    res.json({ ok: true })
+    console.log('Se ha creado el usuario')
+  })
+});
 
 //Obtener todas las tapas
 app.post('/tapas', function (req, res) {
