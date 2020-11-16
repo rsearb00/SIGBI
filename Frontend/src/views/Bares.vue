@@ -4,11 +4,15 @@
     <div class="text-center">
       <v-toolbar class="text-center" color="purple" dark>
         <v-toolbar-title>Bares encontrados:</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="volverATapas()">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
       </v-toolbar>
     </div>
     <v-alert :type="tipoAlerta" v-if="alerta" dismissible>{{
-            textoAlerta
-          }}</v-alert>
+      textoAlerta
+    }}</v-alert>
     <v-flex d-flex>
       <v-layout wrap>
         <v-flex md4 v-for="bar in bares" :key="bar">
@@ -40,6 +44,7 @@
               <div>Teléfono: {{ bar.telephone }}</div>
               <div>Dirección: {{ bar.address }}</div>
               <div>Web: {{ bar.web }}</div>
+              <div>Tapas: {{ bar.tapas.toString() }}</div>
               <div>Fútbol: {{ bar.futbol }}</div>
               <div>Despedidas de solteros: {{ bar.despedidas }}</div>
               <div>Cerveza Artesana: {{ bar.cervezaArtesana }}</div>
@@ -51,7 +56,11 @@
             <v-divider class="mx-4"></v-divider>
 
             <v-card-actions>
-              <v-btn color="deep-purple lighten-2" text @click="agregarBar(bar.name)">
+              <v-btn
+                color="deep-purple lighten-2"
+                text
+                @click="agregarBar(bar.name)"
+              >
                 Añadir a Mis Bares
               </v-btn>
             </v-card-actions>
@@ -85,40 +94,43 @@ export default {
     textoAlerta: "",
   }),
   methods: {
+    volverATapas: function () {
+      this.$router.push({
+        name: "Tapa",
+        params: { idUsuario: this.idUsuario },
+      });
+    },
     reserve() {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 2000);
     },
-     agregarBar: function (nombreBar) {
+    agregarBar: function (nombreBar) {
       //Primero comprobamos que se ha seleccionado al menos una tapa
       if (nombreBar != "") {
         this.tipoAlerta = "success";
         this.alerta = true;
-        this.textoAlerta = "Se ha seleccionado el bar "+nombreBar;
-     
-     console.log('Intento de añadir el bar');
+        this.textoAlerta = "Se ha seleccionado el bar " + nombreBar;
+
+        console.log("Intento de añadir el bar");
         axios
           .post("http://localhost:3000/agregarBar", {
             bar: nombreBar,
-            user: this.idUsuario
+            user: this.idUsuario,
           })
           .then((response) => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
-
               this.tipoAlerta = "success";
               this.alerta = true;
               this.textoAlerta = "¡Bar añadido correctamente!";
 
               console.log("Se ha añadido el bar");
-
             } else {
               this.tipoAlerta = "error";
               this.alerta = true;
-              this.textoAlerta =
-                "No se ha podido añadir el bar";
+              this.textoAlerta = "No se ha podido añadir el bar";
 
               console.log("Fallo en la agregación del bar");
             }

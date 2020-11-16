@@ -52,7 +52,7 @@ app.post("/login", function (req, res) {
 
 //Obtener todas las tapas
 app.post('/tapas', function (req, res) {
-  // Devolver todos si se para un json vacio
+  // Devolver todas si se para un json vacio
   var query = "MATCH (n:Tapa) RETURN n.tipoTapa";
 
   const resultPromise = session.run(query);
@@ -103,6 +103,35 @@ app.post('/tapas', function (req, res) {
   })
 });
 
+app.post('/buscarTapas', function (req, res) {
+  // Devolver todos si se para un json vacio
+  console.log('Peticion de buscar tapas que contengan: ', req.body.tapa)
+  var tapa = req.body.tapa;
+
+  var query = "MATCH (t:Tapa) WHERE toLower(t.tipoTapa) CONTAINS toLower('" + tapa + "') RETURN t.tipoTapa";
+
+  const resultPromise = session.run(query);
+  resultPromise.then(result => {
+
+    if (result.records.length == 0) {
+      res.send({ ok: false })
+      console.log('No se han obtenido las tapas')
+    }
+    else {
+      var tapas = result.records;
+      var tapasFiltro = [];
+
+      //Sacar el tipo de tapa -> devuelve Label: [values]
+      for (var i = 0; i < tapas.length; i++) {
+        console.log('Tapa: ', tapas[i]._fields[0])
+        tapasFiltro.push(tapas[i]._fields[0])
+      }
+      res.json({ ok: true, datos: tapasFiltro });
+
+    }
+  })
+});
+
 
 //Buscar los bares en funcion de las tapas seleccionadas
 app.post('/buscarBares', function (req, res) {
@@ -131,7 +160,7 @@ app.post('/buscarBares', function (req, res) {
     }
   }
   console.log("Query prefinal: ", query)
-  query = query.concat("] RETURN DISTINCT b as Bar");
+  query = query.concat("] RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
   console.log("Query final: ", query)
 
 
@@ -166,6 +195,7 @@ app.post('/buscarBares', function (req, res) {
         if (bar.futbol == undefined) {
           bar.futbol = "No tiene"
         }
+        bar.tapas = record.get("Tapas")
         bares.push(bar);
       }
     },
@@ -178,9 +208,15 @@ app.post('/buscarBares', function (req, res) {
 
         console.log('Se han encontrado ' + bares.length + ' bares')
         for (var i = 0; i < bares.length; i++) {
+          console.log("Bar: " + bares[i].name)
           console.log("Bar: " + bares[i].futbol)
           console.log("Bar: " + bares[i].perros)
           console.log("Bar: " + bares[i].despedidas)
+
+          for (var j = 0; j < bares[i].tapas.length; j++) {
+            bares[i].tapas[j] = " " + bares[i].tapas[j]
+          }
+          console.log("Bar: " + bares[i].tapas)
         }
         res.json({ ok: true, datos: bares });
         console.log('Bares obtenidos correctamente')
@@ -201,9 +237,9 @@ app.post('/agregarBar', function (req, res) {
   var user = req.body.user;
   console.log('Peticion de añadir el bar: ', req.body)
 
-  var query = "MATCH (n:Person), (b:Bar)  WHERE n.user='" + user + "' AND b.name='" + bar + "' CREATE (n)-[:HASBAR]->(b)";
+  var query = "MATCH (n:Person), (b:Bar) WHERE n.user='" + user + "' AND b.name='" + bar + "' CREATE (n)-[:HASBAR]->(b)";
 
-  console.log('Query: ',query)
+  console.log('Query: ', query)
 
   const resultPromise = session.run(query);
   resultPromise.then(result => {
@@ -212,6 +248,105 @@ app.post('/agregarBar', function (req, res) {
   })
 });
 
+
+//Método que agrega una tapa a la lista de Mis Tapas
+//No funciona todavía
+app.post('/agregarMisTapas', function (req, res) {
+  // Devolver todos si se para un json vacio
+  var tapas = req.body.tapas;
+  var user = req.body.user;
+  console.log('Peticion de añadir la tapa ', req.body.tapas)
+  //Falla, hay que hacerlo todo en una consulta
+  var query = "";
+  for (var i = 0; i < tapas.length; i++) {
+    query = query.concat("MATCH (n:Person), (t:Tapa) WHERE n.user='" + user + "' AND t.tipoTapa='" + tapas[i] + "' CREATE (n)-[:HASSEARCHED]->(t);\n");
+
+
+  }
+  console.log('Query: ', query)
+
+  const resultPromise = session.run(query);
+  resultPromise.then(result => {
+    res.json({ ok: true })
+    console.log('Se ha creado la relación usuario-tapa')
+  })
+});
+
+
+//Buscar Mis Bares
+app.post('/misBares', function (req, res) {
+  // Devolver todos si se para un json vacio
+  console.log('Peticion de buscar Mis Bares para el usuario: ', req.body.user)
+  var user = req.body.user;
+  var bares = [];
+
+  var query = "MATCH (n:Person)-[:HASBAR]->(b:Bar) MATCH (b)-[:HASTAPA]->(t:Tapa) WHERE n.user='" + user + "' RETURN DISTINCT b as Bar, collect(t.tipoTapa) as Tapas";
+  console.log("Query final: ", query)
+
+  const resultPromise = session.run(query).subscribe({
+    onNext: function (record) {
+      var bar = record.get("Bar").properties;
+      if (bar.name != undefined) {
+        if (bar.address == undefined) {
+          bar.address = "No tiene"
+        }
+        if (bar.telephone == undefined) {
+          bar.telephone = "No tiene"
+        }
+        if (bar.web == undefined) {
+          bar.web = "No tiene"
+        }
+        if (bar.perros == undefined) {
+          bar.perros = "No acepta"
+        }
+        if (bar.futbolin == undefined) {
+          bar.futbolin = "No tiene"
+        }
+        if (bar.sidra == undefined) {
+          bar.sidra = "No tiene"
+        }
+        if (bar.cervezaArtesana == undefined) {
+          bar.cervezaArtesana = "No tiene"
+        }
+        if (bar.despedidas == undefined) {
+          bar.despedidas = "No tiene"
+        }
+        if (bar.futbol == undefined) {
+          bar.futbol = "No tiene"
+        }
+        bar.tapas = record.get("Tapas")
+        bares.push(bar);
+      }
+    },
+    onCompleted: function () {
+      if (bares.length == 0) {
+        res.send({ ok: false })
+        console.log('No se han obtenido los bares')
+      }
+      else {
+
+        console.log('Se han encontrado ' + bares.length + ' bares')
+        for (var i = 0; i < bares.length; i++) {
+          console.log("Bar: " + bares[i].name)
+          console.log("Bar: " + bares[i].futbol)
+          console.log("Bar: " + bares[i].perros)
+          console.log("Bar: " + bares[i].despedidas)
+
+          for (var j = 0; j < bares[i].tapas.length; j++) {
+            bares[i].tapas[j] = " " + bares[i].tapas[j]
+          }
+          console.log("Bar: " + bares[i].tapas)
+        }
+        res.json({ ok: true, datos: bares });
+        console.log('Bares obtenidos correctamente')
+
+      }
+    },
+    onError: function (error) {
+      console.log(error);
+    }
+  });
+});
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

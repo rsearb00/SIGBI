@@ -4,6 +4,9 @@
     <v-container>
       <v-row no-gutters>
         <div class="col">
+          <v-alert :type="tipoAlerta" v-if="alerta1" dismissible>{{
+            textoAlerta
+          }}</v-alert>
           <v-card class="pa-2">
             <v-toolbar color="purple" dark>
               <v-text-field
@@ -11,7 +14,8 @@
                 label="Busca tu tapa"
                 v-model="buscar"
                 append-icon="mdi-magnify"
-                @keyup.enter="buscarTapa()"
+                @keyup.enter="buscarTapas()"
+                @click:append="buscarTapas()"
               ></v-text-field>
             </v-toolbar>
 
@@ -48,12 +52,16 @@
           </v-card>
         </div>
         <div class="col">
-          <v-alert :type="tipoAlerta" v-if="alerta" dismissible>{{
+          <v-alert :type="tipoAlerta" v-if="alerta2" dismissible>{{
             textoAlerta
           }}</v-alert>
           <v-card class="pa-2">
             <v-toolbar color="purple" dark>
               <v-toolbar-title>Tapas seleccionadas</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon @click="borrarTapasSeleccionadas()">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </v-toolbar>
 
             <v-divider></v-divider>
@@ -202,17 +210,21 @@ export default {
     tapas: [],
     bares: [],
     tapasSeleccionadas: [],
-    alerta: false,
+    alerta1: false,
+    alerta2: false,
     tipoAlerta: "",
     textoAlerta: "",
     ids: [],
   }),
   methods: {
+    borrarTapasSeleccionadas: function () {
+      this.tapasSeleccionadas = [];
+    },
     buscarBares: function () {
       //Primero comprobamos que se ha seleccionado al menos una tapa
       if (this.tapasSeleccionadas.length == 0) {
         this.tipoAlerta = "error";
-        this.alerta = true;
+        this.alerta2 = true;
         this.textoAlerta = "Selecione al menos una tapa";
       } else {
         console.log("Intento de buscar bares");
@@ -226,8 +238,11 @@ export default {
             if (response.data.ok == true) {
               this.bares = response.data.datos;
               this.tipoAlerta = "success";
-              this.alerta = true;
+              this.alerta2 = true;
               this.textoAlerta = "¡Bares encontrados!";
+
+              //Si encuentra los bares, añadimos a MisTapas las tapas buscadas
+              //this.agregarMisTapas();
 
               console.log("Se han encontrado los bares");
               setTimeout(() => {
@@ -238,7 +253,7 @@ export default {
               }, 750);
             } else {
               this.tipoAlerta = "error";
-              this.alerta = true;
+              this.alerta2 = true;
               this.textoAlerta =
                 "No se han encontrado bares con las tapas seleccionadas";
 
@@ -251,37 +266,82 @@ export default {
           });
       }
     },
-    buscarTapa: function () {
-      //Funciona
-      this.buscar = "Ha pulsado enter";
-      console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
+    buscarTapas: function () {
+      //Si está vacío, obtenemos todas las tapas
+      if (this.buscar == "") {
+        //Obtenemos todas las tapas por pantalla al cargar la página
+        console.log("Intento de mostrar las tapas");
+        axios
+          .post("http://localhost:3000/tapas", {})
+          .then((response) => {
+            console.log("Datos recibidos: " + response);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              this.tapas = response.data.datos;
+              console.log(response.data.datos + " Tapas recibidas");
+            } else {
+              console.log(
+                response.data.datos + " Fallo en la obtención de las tapas"
+              );
+            }
+          })
+          .catch((error) => {
+            //Error al recoger las tapas
+            console.log(error);
+          });
+      }
+      //Solo buscamos si la longitud no está vacía
+      else if (this.buscar != "") {
+        console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
+        console.log("Intento de buscar tapa");
+        axios
+          .post("http://localhost:3000/buscarTapas", {
+            tapa: this.buscar,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              this.alerta1 = false;
+              this.tapas = response.data.datos;
+              console.log("Se han encontrado las tapas");
+            } else {
+              this.tipoAlerta = "error";
+              this.alerta1 = true;
+              this.textoAlerta = "No hay tapas con esos criterios";
+              console.log("Fallo en la búsqueda de las tapas");
+            }
+          })
+          .catch((error) => {
+            //Error al recoger los bares
+            console.log(error);
+          });
+      }
     },
-    //Si el campo está vacío
-    buscarAllTapas: function () {
-      //Funciona
-      this.buscar = "Ha pulsado enter";
-      console.log("Ha pulsado enter con valor de búsqueda: ", this.buscar);
+    agregarMisTapas: function () {
+      console.log("Intento de añadir las tapas", this.tapasSeleccionadas);
+      axios
+        .post("http://localhost:3000/agregarMisTapas", {
+          tapas: this.tapasSeleccionadas,
+          user: this.idUsuario,
+        })
+        .then((response) => {
+          console.log("Datos recibidos: " + response.data.ok);
+          //Llamada exitosa
+          if (response.data.ok == true) {
+            console.log("Se han añadido las tapas");
+          } else {
+            console.log("Fallo en la agregación de las tapas");
+          }
+        })
+        .catch((error) => {
+          //Error al añadir el bar
+          console.log(error);
+        });
     },
   },
   mounted: function () {
-    //Obtenemos las tapas por pantalla al cargar la página
-    console.log("Intento de mostrar las tapas");
-    axios
-      .post("http://localhost:3000/tapas", {})
-      .then((response) => {
-        console.log("Datos recibidos: " + response);
-        //Llamada exitosa
-        if (response.data.ok == true) {
-          this.tapas = response.data.datos;
-          console.log(response.data.datos + " Tapas recibidas");
-        } else {
-          console.log(response.data.datos + " Fallo en la obtención de las tapas");
-        }
-      })
-      .catch((error) => {
-        //Error al recoger las tapas
-        console.log(error);
-      });
+    this.buscarTapas();
   },
 };
 </script>
