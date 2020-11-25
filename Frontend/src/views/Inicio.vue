@@ -33,7 +33,7 @@
     <v-flex d-flex>
       <v-layout wrap>
         <v-flex md4 v-for="bar in bares" :key="bar">
-          <v-card :loading="loading" class="card-container" elevation="10">
+          <v-card class="card-container" elevation="10">
             <template slot="progress">
               <v-progress-linear
                 color="deep-purple"

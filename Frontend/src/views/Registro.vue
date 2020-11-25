@@ -47,6 +47,9 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
+                <v-btn dark color="#4D5E9C" @click="iniciarSesion()">
+                  <v-icon>mdi-arrow-left</v-icon>
+                </v-btn>
                 <v-btn dark color="#4D5E9C" @click="crearUsuario()"
                   >Registrarme</v-btn
                 >
@@ -63,7 +66,7 @@
 // @ is an alias to /src
 const axios = require("axios");
 export default {
-  name: "Login",
+  name: "Registro",
   components: {},
   data: () => ({
     id: "",
@@ -80,6 +83,7 @@ export default {
       });
     },
     crearUsuario: function () {
+      this.alerta = false;
       if (
         this.id == "" &&
         this.contrasenya == "" &&
