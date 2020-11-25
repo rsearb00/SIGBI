@@ -11,8 +11,7 @@
       >{{ title }} {{ idUsuario }}?</v-toolbar-title
     >
     <v-spacer></v-spacer>
-
-    <v-btn class="black--text ma-5" color="white" @click="clickeoInicio()">
+    <v-btn v-if="this.isInicio === false"  class="black--text ma-5" color="white" @click="clickeoInicio()">
       <v-icon color="#4D5E9C" left>mdi-home</v-icon>Inicio
     </v-btn>
     <v-btn class="black--text ma-5" color="white" @click="buscarAmigos()">
@@ -35,15 +34,18 @@ export default {
   }),
   props: {
     idUsuario: { type: String, default: "ERROR" },
+    isInicio: { type: Boolean, default: false },
   },
   components: {},
   methods: {
     buscarAmigos: function () {},
     clickeoInicio: function () {
-      this.$router.push({
-        name: "Inicio",
-        params: { idUsuario: this.idUsuario },
-      });
+      if (!this.isInicio) {
+        this.$router.push({
+          name: "Inicio",
+          params: { idUsuario: this.idUsuario, isInicio: true },
+        });
+      }
     },
     clickeoCerrarSesion: function () {
       this.$router.push("/");

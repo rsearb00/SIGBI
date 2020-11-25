@@ -29,16 +29,7 @@
 
             <v-card-text>
               <v-row align="center" class="mx-0">
-                <v-rating
-                  :value="4.5"
-                  color="amber"
-                  dense
-                  half-increments
-                  readonly
-                  size="14"
-                ></v-rating>
-
-                <div class="grey--text ml-4">4.5 (413)</div>
+                
               </v-row>
 
               <div>Teléfono: {{ bar.telephone }}</div>
@@ -80,6 +71,7 @@ export default {
   props: {
     idUsuario: { type: String, default: "ERROR" },
     bares: { type: [], default: "ERROR" },
+    personalizada: { type: String, default: "NO" },
   },
   components: {
     ToolbarTapON,
@@ -94,10 +86,17 @@ export default {
   }),
   methods: {
     volverATapas: function () {
-      this.$router.push({
-        name: "Tapa",
-        params: { idUsuario: this.idUsuario },
-      });
+      if (this.personalizada == "NO") {
+        this.$router.push({
+          name: "Tapa",
+          params: { idUsuario: this.idUsuario },
+        });
+      } else {
+        this.$router.push({
+          name: "Personalizada",
+          params: { idUsuario: this.idUsuario },
+        });
+      }
     },
     reserve() {
       this.loading = true;

@@ -51,6 +51,50 @@
             </v-list>
           </v-card>
         </div>
+
+        <div class="col">
+          <v-alert :type="tipoAlerta" v-if="alerta3" dismissible>{{
+            textoAlerta
+          }}</v-alert>
+          <v-card class="pa-2">
+            <v-toolbar color="purple" dark>
+              <v-toolbar-title>Complementos</v-toolbar-title>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+
+            <v-divider></v-divider>
+
+            <v-list flat>
+              <v-subheader>Propiedades seleccionables</v-subheader>
+
+              <v-list-item-group
+                v-model="propiedadesSeleccionadas"
+                multiple
+                active-class="pink--text"
+              >
+                <template v-for="(prop, i) in propiedades">
+                  <v-list-item :key="`item-${i}`" :value="prop">
+                    <template v-slot:default="{ active, toggle }">
+                      <v-list-item-content>
+                        <v-list-item-title v-text="prop"></v-list-item-title>
+                      </v-list-item-content>
+
+                      <v-list-item-action>
+                        <v-checkbox
+                          :input-value="active"
+                          :true-value="prop"
+                          color="#4D5E9C"
+                          @click="active, toggle"
+                        ></v-checkbox>
+                      </v-list-item-action>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </div>
+
         <div class="col">
           <v-alert :type="tipoAlerta" v-if="alerta2" dismissible>{{
             textoAlerta
@@ -99,100 +143,6 @@
 </template>
 
 <script>
-//pruebas
-/*<v-app id="keep">
-    <ToolbarTapON v-bind:idUsuario="idUsuario" />
-
-    <v-col cols="10" class="py-2">
-      <p>Text Options</p>
-
-      <v-btn-toggle v-model="text" tile color="deep-purple accent-3" group>
-        <v-btn v-for="tapa in tapas" :key="tapa"> <v-icon size="10 px">
-            {{ tapa }}
-          </v-icon></v-btn>
-      </v-btn-toggle>
-    </v-col>
-
-    <v-col cols="12" class="py-2">
-      <p>Escoge las tapas que quieres buscar</p>
-
-      <v-btn-toggle v-model="model" tile color="deep-purple accent-3" group>
-        <v-btn v-for="tapa in tapas" :key="tapa" class="mx-4" dark icon>
-          <v-icon size="10 px">
-            {{ tapa }}
-          </v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </v-col>
-
-    <FooterTapON />
-  </v-app>
-
-*/
-/*
-<v-app-bar dark color="#4D5E9C">
-        <v-toolbar-title>Crear conversación</v-toolbar-title>
-
-        <v-spacer></v-spacer>
-
-        <v-btn icon @click="vuelvePrincipal()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-app-bar>
-
-      <v-container>
-        <v-row dense>
-          <v-col cols="12">
-            <v-list shaped style= "300 px height"  class="overflow-y-auto">
-              <v-list-item-group v-model="model" multiple>
-                <template v-for="(tapa, i) in tapas">
-                  <v-divider v-if="!tapa" :key="`divider-${i}`"></v-divider>
-
-                  <v-list-item
-                    v-else
-                    :key="`item-${i}`"
-                    :value="tapa"
-                    active-class="deep-purple--text text--accent-4"
-                  >
-                    <template v-slot:default="{ active, toggle }">
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="tapa"
-                        ></v-list-item-title>
-                      </v-list-item-content>
-
-                      <v-list-item-action>
-                        <v-checkbox
-                          :input-value="active"
-                          :true-value="tapa"
-                          color="#4D5E9C"
-                          @click="toggle"
-                        ></v-checkbox>
-                      </v-list-item-action>
-                    </template>
-                  </v-list-item>
-                </template>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <v-fab-transition>
-        <v-btn
-          color="#4D5E9C"
-          dark
-          absolute
-          bottom
-          right
-          fab
-          @click="buscarBares()"
-        >
-          <v-icon>mdi-send</v-icon>
-        </v-btn>
-      </v-fab-transition>
-
-*/
 const axios = require("axios");
 import ToolbarTapON from "@/components/ToolbarTapON";
 import FooterTapON from "@/components/FooterTapON";
@@ -208,13 +158,25 @@ export default {
     buscar: "",
     items: [],
     tapas: [],
+    misTapas: [],
     bares: [],
+    propiedades: [
+      "Fútbol",
+      "Despedidas de solteros",
+      "Cerveza artesana",
+      "Sidra artesana",
+      "Acepta Perros",
+      "Futbolín",
+    ],
+    propiedadesSeleccionadas: [],
     tapasSeleccionadas: [],
     alerta1: false,
     alerta2: false,
+    alerta3: false,
     tipoAlerta: "",
     textoAlerta: "",
     ids: [],
+    agregar: false,
   }),
   methods: {
     borrarTapasSeleccionadas: function () {
@@ -222,15 +184,29 @@ export default {
     },
     buscarBares: function () {
       //Primero comprobamos que se ha seleccionado al menos una tapa
-      if (this.tapasSeleccionadas.length == 0) {
+      if (
+        this.tapasSeleccionadas.length == 0 &&
+        this.propiedadesSeleccionadas.length == 0
+      ) {
         this.tipoAlerta = "error";
         this.alerta2 = true;
-        this.textoAlerta = "Selecione al menos una tapa";
+        this.textoAlerta = "Seleccione sus preferencias";
+      } else if (this.tapasSeleccionadas.length == 0) {
+        this.tipoAlerta = "error";
+        this.alerta2 = true;
+        this.textoAlerta = "Seleccione al menos una tapa";
+      } else if (this.propiedadesSeleccionadas.length == 0) {
+        this.tipoAlerta = "error";
+        this.alerta2 = true;
+        this.textoAlerta = "Seleccione al menos un complemento";
       } else {
+        //agregamos las tapas buscadas
+        this.agregarMisTapas();
         console.log("Intento de buscar bares");
         axios
-          .post("http://localhost:3000/buscarBares", {
+          .post("http://localhost:3000/buscarBaresPersonalizados", {
             tapas: this.tapasSeleccionadas,
+            propiedades: this.propiedadesSeleccionadas,
           })
           .then((response) => {
             console.log("Datos recibidos: " + response.data.ok);
@@ -241,14 +217,15 @@ export default {
               this.alerta2 = true;
               this.textoAlerta = "¡Bares encontrados!";
 
-              //Si encuentra los bares, añadimos a MisTapas las tapas buscadas
-              //this.agregarMisTapas();
-
               console.log("Se han encontrado los bares");
               setTimeout(() => {
                 this.$router.push({
                   name: "Bares",
-                  params: { idUsuario: this.idUsuario, bares: this.bares },
+                  params: {
+                    idUsuario: this.idUsuario,
+                    bares: this.bares,
+                    personalizada: "SI",
+                  },
                 });
               }, 750);
             } else {
@@ -318,30 +295,86 @@ export default {
           });
       }
     },
-    agregarMisTapas: function () {
-      console.log("Intento de añadir las tapas", this.tapasSeleccionadas);
+    buscarMisTapas: function () {
+      console.log("Intento de mostrar las tapas");
       axios
-        .post("http://localhost:3000/agregarMisTapas", {
-          tapas: this.tapasSeleccionadas,
+        .post("http://localhost:3000/misTapas", {
           user: this.idUsuario,
         })
         .then((response) => {
-          console.log("Datos recibidos: " + response.data.ok);
+          console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
-            console.log("Se han añadido las tapas");
+            this.misTapas = response.data.datos;
+            console.log(response.data + " Tapas recibidas");
+            this.agregar = true;
           } else {
-            console.log("Fallo en la agregación de las tapas");
+            console.log(response.data + " Fallo en la obtención de las tapas");
+            this.agregar = false;
           }
         })
         .catch((error) => {
-          //Error al añadir el bar
+          //Error al recoger las tapas
           console.log(error);
         });
+    },
+    agregarMisTapas: function () {
+      //Si buscar Tapas devuelve falso, es porque aún no hay búsquedas
+      //Por tanto, agregar será falso
+      if (this.agregar == false) {
+        console.log(
+          "Intento de añadir las tapas por primera vez",
+          this.tapasSeleccionadas
+        );
+        axios
+          .post("http://localhost:3000/agregarMisTapas", {
+            tapas: this.tapasSeleccionadas,
+            user: this.idUsuario,
+            nuevo: true,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              console.log("Se han añadido las tapas");
+            } else {
+              console.log("Fallo en la agregación de las tapas");
+            }
+          })
+          .catch((error) => {
+            //Error al añadir el bar
+            console.log(error);
+          });
+      } else if (this.agregar == true) {
+        console.log(
+          "Intento de añadir las tapas habiendo ya otras",
+          this.tapasSeleccionadas
+        );
+        axios
+          .post("http://localhost:3000/agregarMisTapas", {
+            tapas: this.tapasSeleccionadas,
+            user: this.idUsuario,
+            nuevo: false,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              console.log("Se han añadido las tapas");
+            } else {
+              console.log("Fallo en la agregación de las tapas");
+            }
+          })
+          .catch((error) => {
+            //Error al añadir el bar
+            console.log(error);
+          });
+      }
     },
   },
   mounted: function () {
     this.buscarTapas();
+    this.buscarMisTapas();
   },
 };
 </script>

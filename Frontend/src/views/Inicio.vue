@@ -1,6 +1,6 @@
 <template>
   <v-app id="keep">
-    <ToolbarTapON v-bind:idUsuario="idUsuario" />
+    <ToolbarTapON v-bind:idUsuario="idUsuario" v-bind:isInicio="true" />
     <div class="text-center">
       <v-btn class="ma-2" elevation="5" color="secondary" @click="tapa()">
         Buscar por Tapa
@@ -25,6 +25,7 @@
         Voy a tener suerte
       </v-btn>
     </div>
+    
     <div class="text-center">
       <v-toolbar class="text-center" color="purple" dark>
         <v-toolbar-title>Mis Bares:</v-toolbar-title>
@@ -46,16 +47,7 @@
 
             <v-card-text>
               <v-row align="center" class="mx-0">
-                <v-rating
-                  :value="4.5"
-                  color="amber"
-                  dense
-                  half-increments
-                  readonly
-                  size="14"
-                ></v-rating>
-
-                <div class="grey--text ml-4">4.5 (413)</div>
+                
               </v-row>
 
               <div>Teléfono: {{ bar.telephone }}</div>
@@ -86,6 +78,7 @@ import FooterTapON from "@/components/FooterTapON";
 export default {
   props: {
     idUsuario: { type: String, default: "ERROR" },
+    isInicio: { type: Boolean, default: false},
   },
   components: {
     ToolbarTapON,

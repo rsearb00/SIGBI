@@ -99,100 +99,6 @@
 </template>
 
 <script>
-//pruebas
-/*<v-app id="keep">
-    <ToolbarTapON v-bind:idUsuario="idUsuario" />
-
-    <v-col cols="10" class="py-2">
-      <p>Text Options</p>
-
-      <v-btn-toggle v-model="text" tile color="deep-purple accent-3" group>
-        <v-btn v-for="tapa in tapas" :key="tapa"> <v-icon size="10 px">
-            {{ tapa }}
-          </v-icon></v-btn>
-      </v-btn-toggle>
-    </v-col>
-
-    <v-col cols="12" class="py-2">
-      <p>Escoge las tapas que quieres buscar</p>
-
-      <v-btn-toggle v-model="model" tile color="deep-purple accent-3" group>
-        <v-btn v-for="tapa in tapas" :key="tapa" class="mx-4" dark icon>
-          <v-icon size="10 px">
-            {{ tapa }}
-          </v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </v-col>
-
-    <FooterTapON />
-  </v-app>
-
-*/
-/*
-<v-app-bar dark color="#4D5E9C">
-        <v-toolbar-title>Crear conversación</v-toolbar-title>
-
-        <v-spacer></v-spacer>
-
-        <v-btn icon @click="vuelvePrincipal()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-app-bar>
-
-      <v-container>
-        <v-row dense>
-          <v-col cols="12">
-            <v-list shaped style= "300 px height"  class="overflow-y-auto">
-              <v-list-item-group v-model="model" multiple>
-                <template v-for="(tapa, i) in tapas">
-                  <v-divider v-if="!tapa" :key="`divider-${i}`"></v-divider>
-
-                  <v-list-item
-                    v-else
-                    :key="`item-${i}`"
-                    :value="tapa"
-                    active-class="deep-purple--text text--accent-4"
-                  >
-                    <template v-slot:default="{ active, toggle }">
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="tapa"
-                        ></v-list-item-title>
-                      </v-list-item-content>
-
-                      <v-list-item-action>
-                        <v-checkbox
-                          :input-value="active"
-                          :true-value="tapa"
-                          color="#4D5E9C"
-                          @click="toggle"
-                        ></v-checkbox>
-                      </v-list-item-action>
-                    </template>
-                  </v-list-item>
-                </template>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <v-fab-transition>
-        <v-btn
-          color="#4D5E9C"
-          dark
-          absolute
-          bottom
-          right
-          fab
-          @click="buscarBares()"
-        >
-          <v-icon>mdi-send</v-icon>
-        </v-btn>
-      </v-fab-transition>
-
-*/
 const axios = require("axios");
 import ToolbarTapON from "@/components/ToolbarTapON";
 import FooterTapON from "@/components/FooterTapON";
@@ -227,7 +133,7 @@ export default {
       if (this.tapasSeleccionadas.length == 0) {
         this.tipoAlerta = "error";
         this.alerta2 = true;
-        this.textoAlerta = "Selecione al menos una tapa";
+        this.textoAlerta = "Seleccione al menos una tapa";
       } else {
         //agregamos las tapas buscadas
         this.agregarMisTapas();

@@ -251,6 +251,125 @@ app.post('/buscarBares', function (req, res) {
 
 });
 
+//Buscar los bares en funcion de las tapas seleccionadas
+app.post('/buscarBaresPersonalizados', function (req, res) {
+
+  const sessionOtra = driver.session();
+  var tapas = req.body.tapas;
+  var propiedades = req.body.propiedades;
+  var bares = [];
+  console.log('Peticion de buscar bares con las tapas: ', tapas)
+  console.log('Y las propiedades: ', propiedades)
+
+  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
+  console.log("Query parcial: ", query)
+  //Primero metemos las tapas en el array
+  for (var i = 0; i < tapas.length; i++) {
+    if (i + 1 < tapas.length) {
+      query = query.concat("'" + tapas[i] + "',");
+    }
+    else if (i + 1 == tapas.length) {
+      query = query.concat("'" + tapas[i] + "'");
+    }
+  }
+  console.log("Query prefinal con tapas: ", query)
+
+
+
+  //Ahora, en función de la propiedad añadida, hacemos AND
+  query = query.concat("] ");
+  for (var j = 0; j < propiedades.length; j++) {
+    if (propiedades[j] == 'Fútbol') {
+      query = query.concat("AND b.futbol='si' ");
+    }
+    if (propiedades[j] == 'Acepta Perros') {
+      query = query.concat("AND b.perros='si' ");
+    }
+    if (propiedades[j] == 'Despedidas de solteros') {
+      query = query.concat("AND b.despedidas='si' ");
+    }
+    if (propiedades[j] == 'Cerveza artesana') {
+      query = query.concat("AND b.cervezaArtesana='si' ");
+    }
+    if (propiedades[j] == 'Sidra artesana') {
+      query = query.concat("AND b.sidra='si' ");
+    }
+    if (propiedades[j] == 'Futbolín') {
+      query = query.concat("AND b.futbolin='si' ");
+    }
+  }
+  query = query.concat(" RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
+  console.log("Query final: ", query)
+
+
+  const resultPromise = sessionOtra.run(query).subscribe({
+    onNext: function (record) {
+      var bar = record.get("Bar").properties;
+      if (bar.name != undefined) {
+        if (bar.address == undefined) {
+          bar.address = "No tiene"
+        }
+        if (bar.telephone == undefined) {
+          bar.telephone = "No tiene"
+        }
+        if (bar.web == undefined) {
+          bar.web = "No tiene"
+        }
+        if (bar.perros == undefined) {
+          bar.perros = "No acepta"
+        }
+        if (bar.futbolin == undefined) {
+          bar.futbolin = "No tiene"
+        }
+        if (bar.sidra == undefined) {
+          bar.sidra = "No tiene"
+        }
+        if (bar.cervezaArtesana == undefined) {
+          bar.cervezaArtesana = "No tiene"
+        }
+        if (bar.despedidas == undefined) {
+          bar.despedidas = "No tiene"
+        }
+        if (bar.futbol == undefined) {
+          bar.futbol = "No tiene"
+        }
+        bar.tapas = record.get("Tapas")
+        bares.push(bar);
+      }
+    },
+    onCompleted: function () {
+      if (bares.length == 0) {
+        res.send({ ok: false })
+        console.log('No se han obtenido los bares')
+      }
+      else {
+
+        console.log('Se han encontrado ' + bares.length + ' bares')
+        for (var i = 0; i < bares.length; i++) {
+          console.log("Bar: " + bares[i].name)
+          console.log("Bar: " + bares[i].futbol)
+          console.log("Bar: " + bares[i].perros)
+          console.log("Bar: " + bares[i].despedidas)
+
+          for (var j = 0; j < bares[i].tapas.length; j++) {
+            bares[i].tapas[j] = " " + bares[i].tapas[j]
+          }
+          console.log("Bar: " + bares[i].tapas)
+        }
+        res.json({ ok: true, datos: bares });
+        console.log('Bares obtenidos correctamente')
+
+      }
+    },
+    onError: function (error) {
+      console.log(error);
+    }
+  });
+  //sessionOtra.close();
+
+});
+
+
 //Método que agrega un bar a la lista de mis bares
 app.post('/agregarBar', function (req, res) {
   // Devolver todos si se para un json vacio
@@ -332,38 +451,38 @@ app.post('/misTapas', function (req, res) {
   console.log('Peticion de buscar Mis Tapas para el usuario: ', req.body.user)
   const sessionOtra = driver.session();
   var user = req.body.user;
-   var tapas = [];
- 
-   var query = "MATCH (n:Person) WHERE n.user='" + user + "' RETURN DISTINCT n.misTapas AS Tapas";
-   console.log("Query final: ", query)
- 
-   const resultPromise = sessionOtra.run(query).subscribe({
-     onNext: function (record) {
-       var tapa = record.get("Tapas");
-       tapas.push(tapa);
-     },
-     onCompleted: function () {
-       if (tapas[0]==null) {
-         res.send({ ok: false })
-         console.log('No se han obtenido las tapas')
-       }
-       else {
- 
-         console.log('Se han encontrado ' + tapas.length + ' tapas')
-         for (var i = 0; i < tapas.length; i++) {
- 
-           console.log("Tapa: " + tapas[i])
-         }
-         res.json({ ok: true, datos: tapas });
-         console.log('Tapas obtenidos correctamente')
- 
-       }
-     },
-     onError: function (error) {
-       console.log(error + ' El usuario no tiene tapas');
-     }
-   });
-   //sessionOtra.close();
+  var tapas = [];
+
+  var query = "MATCH (n:Person) WHERE n.user='" + user + "' RETURN DISTINCT n.misTapas AS Tapas";
+  console.log("Query final: ", query)
+
+  const resultPromise = sessionOtra.run(query).subscribe({
+    onNext: function (record) {
+      var tapa = record.get("Tapas");
+      tapas.push(tapa);
+    },
+    onCompleted: function () {
+      if (tapas[0] == null) {
+        res.send({ ok: false })
+        console.log('No se han obtenido las tapas')
+      }
+      else {
+
+        console.log('Se han encontrado ' + tapas.length + ' tapas')
+        for (var i = 0; i < tapas.length; i++) {
+
+          console.log("Tapa: " + tapas[i])
+        }
+        res.json({ ok: true, datos: tapas });
+        console.log('Tapas obtenidas correctamente')
+
+      }
+    },
+    onError: function (error) {
+      console.log(error + ' El usuario no tiene tapas');
+    }
+  });
+  //sessionOtra.close();
 });
 
 
