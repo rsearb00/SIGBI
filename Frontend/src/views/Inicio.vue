@@ -25,7 +25,30 @@
         Voy a tener suerte
       </v-btn>
     </div>
-    
+
+    <div class="text-center">
+      <v-toolbar class="text-center" color="purple" dark>
+        <v-toolbar-title>Mis Tapas:</v-toolbar-title>
+      </v-toolbar>
+    </div>
+    <v-flex d-flex>
+      <v-layout wrap>
+        <v-flex md2 v-for="tapa in tapasFiltro" :key="tapa">
+          <v-card class="card-container" elevation="10">
+            <template slot="progress">
+              <v-progress-linear
+                color="deep-purple"
+                height="10"
+                indeterminate
+              ></v-progress-linear>
+            </template>
+
+            <v-card-title>{{ tapa }}</v-card-title>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-flex>
+
     <div class="text-center">
       <v-toolbar class="text-center" color="purple" dark>
         <v-toolbar-title>Mis Bares:</v-toolbar-title>
@@ -46,9 +69,7 @@
             <v-card-title>{{ bar.name }}</v-card-title>
 
             <v-card-text>
-              <v-row align="center" class="mx-0">
-                
-              </v-row>
+              <v-row align="center" class="mx-0"> </v-row>
 
               <div>Teléfono: {{ bar.telephone }}</div>
               <div>Dirección: {{ bar.address }}</div>
@@ -61,6 +82,17 @@
               <div>Acepta perros: {{ bar.perros }}</div>
               <div>Futbolín: {{ bar.futbolin }}</div>
             </v-card-text>
+            <v-divider class="mx-4"></v-divider>
+
+            <v-card-actions>
+              <v-btn
+                color="deep-purple lighten-2"
+                text
+                @click="borrarBar(bar.name)"
+              >
+                Borrar Bar de Mis Bares
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
@@ -78,7 +110,7 @@ import FooterTapON from "@/components/FooterTapON";
 export default {
   props: {
     idUsuario: { type: String, default: "ERROR" },
-    isInicio: { type: Boolean, default: false},
+    isInicio: { type: Boolean, default: false },
   },
   components: {
     ToolbarTapON,
@@ -87,6 +119,8 @@ export default {
   data: () => ({
     misTapas: [],
     bares: [],
+    contador: {},
+    tapasFiltro:[]
     //tapasSinFiltro: [],
   }),
   methods: {
@@ -103,11 +137,17 @@ export default {
       });
     },
     recomendacion: function () {
+      //Aquí usaremos el algoritmo de recomendación planteado
+      //Idea: como tenemos un array con todas las búsquedas del usuario, contaremos la aparición de cada tapa y le recomendaremos un bar en función de esas preferencias
+      //Este objeto guardará cada tapa con su número de apariciones
+      //let contador = {};
+      /*
       this.$router.push({
         name: "Recomendacion",
         params: { idUsuario: this.idUsuario },
-      });
+      });*/
     },
+
     random: function () {
       this.$router.push({
         name: "Random",
@@ -126,6 +166,16 @@ export default {
           if (response.data.ok == true) {
             this.misTapas = response.data.datos;
             console.log(response.data + " Tapas recibidas");
+
+            this.misTapas.forEach((el) => {
+              this.contador[el] = (this.contador[el] || 0) + 1;
+            });
+
+            for (var cont in this.contador) {
+              this.tapasFiltro.push(cont);
+              console.log("Tapa: ", cont);
+            }
+            console.log("El array de tapas filtrado: ", this.tapasFiltro);
           } else {
             console.log(response.data + " Fallo en la obtención de las tapas");
           }
@@ -155,6 +205,42 @@ export default {
           //Error al recoger los bares
           console.log(error);
         });
+    },
+    borrarBar: function (nombreBar) {
+      //Primero comprobamos que se ha seleccionado al ç un bar
+      if (nombreBar != "") {
+        this.tipoAlerta = "success";
+        this.alerta = true;
+        this.textoAlerta = "Se ha seleccionado el bar " + nombreBar;
+
+        console.log("Intento de borrar el bar");
+        axios;
+        /* .post("http://localhost:3000/agregarBar", {
+            bar: nombreBar,
+            user: this.idUsuario,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              this.tipoAlerta = "success";
+              this.alerta = true;
+              this.textoAlerta = "¡Bar añadido correctamente!";
+
+              console.log("Se ha añadido el bar");
+            } else {
+              this.tipoAlerta = "error";
+              this.alerta = true;
+              this.textoAlerta = "No se ha podido añadir el bar";
+
+              console.log("Fallo en la agregación del bar");
+            }
+          })
+          .catch((error) => {
+            //Error al añadir el bar
+            console.log(error);
+          });*/
+      }
     },
   },
   mounted: function () {

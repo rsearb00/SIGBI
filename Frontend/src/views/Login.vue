@@ -35,7 +35,7 @@
                     prepend-icon="mdi-lock"
                     type="password"
                     v-model="contrasenya"
-                    v-on:keyup.enter="clickeo"
+                    @keyup.enter="iniciarSesion()"
                   />
                 </v-form>
               </v-card-text>
@@ -44,7 +44,7 @@
                 <v-btn dark color="#4D5E9C" @click="registrarse()"
                   >Registrarse</v-btn
                 >
-                <v-btn dark color="#4D5E9C" @click="iniciarSesion()"
+                <v-btn dark color="#4D5E9C" @keyup.enter="iniciarSesion()" @click="iniciarSesion()"
                   >Iniciar Sesión</v-btn
                 >
               </v-card-actions>

@@ -104,7 +104,7 @@ export default {
       setTimeout(() => (this.loading = false), 2000);
     },
     agregarBar: function (nombreBar) {
-      //Primero comprobamos que se ha seleccionado al menos una tapa
+      //Primero comprobamos que se ha seleccionado un bar
       if (nombreBar != "") {
         this.tipoAlerta = "success";
         this.alerta = true;

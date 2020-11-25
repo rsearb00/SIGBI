@@ -154,7 +154,6 @@ app.post('/buscarTapas', function (req, res) {
 
 //Buscar los bares en funcion de las tapas seleccionadas
 app.post('/buscarBares', function (req, res) {
-  // Devolver todos si se para un json vacio
   console.log('Peticion de buscar bares con las tapas: ', req.body)
   const sessionOtra = driver.session();
   var tapas = req.body.tapas;
@@ -377,7 +376,8 @@ app.post('/agregarBar', function (req, res) {
   var user = req.body.user;
   console.log('Peticion de añadir el bar: ', req.body)
 
-  var query = "MATCH (n:Person), (b:Bar) WHERE n.user='" + user + "' AND b.name='" + bar + "' CREATE (n)-[:HASBAR]->(b)";
+  //Usamos Merge, si ya existía la relación no la crea, si no existía, sí
+  var query = "MATCH (n:Person), (b:Bar) WHERE n.user='" + user + "' AND b.name='" + bar + "' MERGE (n)-[:HASBAR]->(b)";
 
   console.log('Query: ', query)
 
@@ -467,13 +467,13 @@ app.post('/misTapas', function (req, res) {
         console.log('No se han obtenido las tapas')
       }
       else {
+        //var arrayTapas = tapas.split(",")
+        //console.log('Se han encontrado ' + arrayTapas.length + ' tapas')
+        //for (var i = 0; i < arrayTapas.length; i++) {
 
-        console.log('Se han encontrado ' + tapas.length + ' tapas')
-        for (var i = 0; i < tapas.length; i++) {
-
-          console.log("Tapa: " + tapas[i])
-        }
-        res.json({ ok: true, datos: tapas });
+          console.log("Tapas: " + tapas)
+        //}
+        res.json({ ok: true, datos: tapas[0] });
         console.log('Tapas obtenidas correctamente')
 
       }
