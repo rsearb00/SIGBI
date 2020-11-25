@@ -92,7 +92,7 @@ export default {
     FooterTapON,
   },
   data: () => ({
-    tapas: [],
+    misTapas: [],
     bares: [],
     //tapasSinFiltro: [],
   }),
@@ -121,7 +121,27 @@ export default {
         params: { idUsuario: this.idUsuario },
       });
     },
-    cargarMisTapas: function () {},
+    cargarMisTapas: function () {
+      console.log("Intento de mostrar las tapas");
+      axios
+        .post("http://localhost:3000/misTapas", {
+          user: this.idUsuario,
+        })
+        .then((response) => {
+          console.log("Datos recibidos: " + response);
+          //Llamada exitosa
+          if (response.data.ok == true) {
+            this.misTapas = response.data.datos;
+            console.log(response.data + " Tapas recibidas");
+          } else {
+            console.log(response.data + " Fallo en la obtención de las tapas");
+          }
+        })
+        .catch((error) => {
+          //Error al recoger las tapas
+          console.log(error);
+        });
+    },
     cargarMisBares: function () {
       console.log("Intento de mostrar los bares");
       axios
@@ -146,6 +166,7 @@ export default {
   },
   mounted: function () {
     this.cargarMisBares();
+    this.cargarMisTapas();
   },
 };
 </script>

@@ -208,6 +208,7 @@ export default {
     buscar: "",
     items: [],
     tapas: [],
+    misTapas: [],
     bares: [],
     tapasSeleccionadas: [],
     alerta1: false,
@@ -215,6 +216,7 @@ export default {
     tipoAlerta: "",
     textoAlerta: "",
     ids: [],
+    agregar: false
   }),
   methods: {
     borrarTapasSeleccionadas: function () {
@@ -227,6 +229,8 @@ export default {
         this.alerta2 = true;
         this.textoAlerta = "Selecione al menos una tapa";
       } else {
+        //agregamos las tapas buscadas
+        this.agregarMisTapas();
         console.log("Intento de buscar bares");
         axios
           .post("http://localhost:3000/buscarBares", {
@@ -240,9 +244,6 @@ export default {
               this.tipoAlerta = "success";
               this.alerta2 = true;
               this.textoAlerta = "¡Bares encontrados!";
-
-              //Si encuentra los bares, añadimos a MisTapas las tapas buscadas
-              //this.agregarMisTapas();
 
               console.log("Se han encontrado los bares");
               setTimeout(() => {
@@ -318,30 +319,86 @@ export default {
           });
       }
     },
-    agregarMisTapas: function () {
-      console.log("Intento de añadir las tapas", this.tapasSeleccionadas);
+    buscarMisTapas: function () {
+      console.log("Intento de mostrar las tapas");
       axios
-        .post("http://localhost:3000/agregarMisTapas", {
-          tapas: this.tapasSeleccionadas,
+        .post("http://localhost:3000/misTapas", {
           user: this.idUsuario,
         })
         .then((response) => {
-          console.log("Datos recibidos: " + response.data.ok);
+          console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
-            console.log("Se han añadido las tapas");
+            this.misTapas = response.data.datos;
+            console.log(response.data + " Tapas recibidas");
+            this.agregar=true;
           } else {
-            console.log("Fallo en la agregación de las tapas");
+            console.log(response.data + " Fallo en la obtención de las tapas");
+            this.agregar=false;
           }
         })
         .catch((error) => {
-          //Error al añadir el bar
+          //Error al recoger las tapas
           console.log(error);
         });
+    },
+    agregarMisTapas: function () {
+      //Si buscar Tapas devuelve falso, es porque aún no hay búsquedas
+      //Por tanto, agregar será falso
+      if (this.agregar==false) {
+        console.log(
+          "Intento de añadir las tapas por primera vez",
+          this.tapasSeleccionadas
+        );
+        axios
+          .post("http://localhost:3000/agregarMisTapas", {
+            tapas: this.tapasSeleccionadas,
+            user: this.idUsuario,
+            nuevo: true,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              console.log("Se han añadido las tapas");
+            } else {
+              console.log("Fallo en la agregación de las tapas");
+            }
+          })
+          .catch((error) => {
+            //Error al añadir el bar
+            console.log(error);
+          });
+      } else if (this.agregar==true){
+        console.log(
+          "Intento de añadir las tapas habiendo ya otras",
+          this.tapasSeleccionadas
+        );
+        axios
+          .post("http://localhost:3000/agregarMisTapas", {
+            tapas: this.tapasSeleccionadas,
+            user: this.idUsuario,
+            nuevo: false,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              console.log("Se han añadido las tapas");
+            } else {
+              console.log("Fallo en la agregación de las tapas");
+            }
+          })
+          .catch((error) => {
+            //Error al añadir el bar
+            console.log(error);
+          });
+      }
     },
   },
   mounted: function () {
     this.buscarTapas();
+    this.buscarMisTapas();
   },
 };
 </script>

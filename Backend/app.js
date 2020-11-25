@@ -57,7 +57,7 @@ app.post('/registro', function (req, res) {
   console.log('Peticion de crear el usuario: ', req.body)
 
   //Ejemplo: CREATE (:Person{name:"Pepe Navarro", user:"Pepe", password:"Pepe123"})
-  var query = "CREATE (n:Person{name:'"+name+"', user:'"+user+"', password:'"+password+"'})";
+  var query = "CREATE (n:Person{name:'" + name + "', user:'" + user + "', password:'" + password + "'})";
 
 
   console.log('Query: ', query)
@@ -156,6 +156,7 @@ app.post('/buscarTapas', function (req, res) {
 app.post('/buscarBares', function (req, res) {
   // Devolver todos si se para un json vacio
   console.log('Peticion de buscar bares con las tapas: ', req.body)
+  const sessionOtra = driver.session();
   var tapas = req.body.tapas;
   var bares = [];
   //Primera prueba: devolvemos todos los bares que tienen alguna de las tapas seleccionadas porque tenemos pocos en la base
@@ -183,7 +184,7 @@ app.post('/buscarBares', function (req, res) {
   console.log("Query final: ", query)
 
 
-  const resultPromise = session.run(query).subscribe({
+  const resultPromise = sessionOtra.run(query).subscribe({
     onNext: function (record) {
       var bar = record.get("Bar").properties;
       if (bar.name != undefined) {
@@ -246,6 +247,7 @@ app.post('/buscarBares', function (req, res) {
       console.log(error);
     }
   });
+  //sessionOtra.close();
 
 });
 
@@ -274,21 +276,94 @@ app.post('/agregarMisTapas', function (req, res) {
   // Devolver todos si se para un json vacio
   var tapas = req.body.tapas;
   var user = req.body.user;
-  console.log('Peticion de añadir la tapa ', req.body.tapas)
+  var nuevo = req.body.nuevo;
+  console.log('Peticion de añadir la tapa ', tapas)
+  const sessionOtra = driver.session();
+  if (tapas.length == 1) {
+    console.log('Tapas 0: ' + tapas[0])
+  }
   //Falla, hay que hacerlo todo en una consulta
-  var query = "";
-  for (var i = 0; i < tapas.length; i++) {
+  // var query = "";
+  /*for (var i = 0; i < tapas.length; i++) {
     query = query.concat("MATCH (n:Person), (t:Tapa) WHERE n.user='" + user + "' AND t.tipoTapa='" + tapas[i] + "' CREATE (n)-[:HASSEARCHED]->(t);\n");
 
 
-  }
-  console.log('Query: ', query)
+  }*/
+  var query = "MATCH (n:Person) WHERE n.user='" + user + "' SET n.misTapas =";
 
-  const resultPromise = session.run(query);
+  //Si aún no tiene tapas guardadas:
+  if (nuevo == true) {
+    query = query.concat("[")
+    /*if(tapas.length==1){
+      query = query.concat("'" + tapas[0] + "'")
+      
+    }*/
+    for (var i = 0; i < tapas.length; i++) {
+      console.log('Tapas ' + i + " " + tapas[i])
+      if (i == 0)
+        query = query.concat("'" + tapas[i] + "'")
+      else
+        query = query.concat(", '" + tapas[i] + "'")
+    }
+    query = query.concat("]")
+
+  }
+  else if (nuevo == false) {
+    query = query.concat("n.misTapas ")
+    for (var i = 0; i < tapas.length; i++) {
+
+      query = query.concat("+ '" + tapas[i] + "'")
+
+    }
+  }
+  console.log('Query final: ', query)
+
+  const resultPromise = sessionOtra.run(query);
   resultPromise.then(result => {
     res.json({ ok: true })
-    console.log('Se ha creado la relación usuario-tapa')
+    console.log('Se han añadido las tapas al perfil del usuario')
+    //sessionOtra.close();
   })
+});
+
+//Buscar Mis Tapas
+app.post('/misTapas', function (req, res) {
+  // Devolver todos si se para un json vacio
+  console.log('Peticion de buscar Mis Tapas para el usuario: ', req.body.user)
+  const sessionOtra = driver.session();
+  var user = req.body.user;
+   var tapas = [];
+ 
+   var query = "MATCH (n:Person) WHERE n.user='" + user + "' RETURN DISTINCT n.misTapas AS Tapas";
+   console.log("Query final: ", query)
+ 
+   const resultPromise = sessionOtra.run(query).subscribe({
+     onNext: function (record) {
+       var tapa = record.get("Tapas");
+       tapas.push(tapa);
+     },
+     onCompleted: function () {
+       if (tapas[0]==null) {
+         res.send({ ok: false })
+         console.log('No se han obtenido las tapas')
+       }
+       else {
+ 
+         console.log('Se han encontrado ' + tapas.length + ' tapas')
+         for (var i = 0; i < tapas.length; i++) {
+ 
+           console.log("Tapa: " + tapas[i])
+         }
+         res.json({ ok: true, datos: tapas });
+         console.log('Tapas obtenidos correctamente')
+ 
+       }
+     },
+     onError: function (error) {
+       console.log(error + ' El usuario no tiene tapas');
+     }
+   });
+   //sessionOtra.close();
 });
 
 
@@ -362,7 +437,7 @@ app.post('/misBares', function (req, res) {
       }
     },
     onError: function (error) {
-      console.log(error);
+      console.log(error + ' El usuario no tiene bares');
     }
   });
 });
