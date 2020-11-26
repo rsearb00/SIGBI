@@ -19,11 +19,11 @@
         color="secondary"
         @click="recomendacion()"
       >
-        La recomendación de TapO'N
+        Voy a tener TapO'N
       </v-btn>
-      <v-btn class="ma-2" elevation="5" color="secondary" @click="random()">
-        Voy a tener suerte
-      </v-btn>
+      <v-alert :type="tipoAlerta" v-if="alerta1" dismissible>{{
+        textoAlerta
+      }}</v-alert>
     </div>
 
     <div class="text-center">
@@ -117,10 +117,13 @@ export default {
     FooterTapON,
   },
   data: () => ({
+    alerta1: false,
+    tipoAlerta: "",
+    textoAlerta: "",
     misTapas: [],
     bares: [],
     contador: {},
-    tapasFiltro:[]
+    tapasFiltro: [],
     //tapasSinFiltro: [],
   }),
   methods: {
@@ -138,9 +141,71 @@ export default {
     },
     recomendacion: function () {
       //Aquí usaremos el algoritmo de recomendación planteado
-      //Idea: como tenemos un array con todas las búsquedas del usuario, contaremos la aparición de cada tapa y le recomendaremos un bar en función de esas preferencias
-      //Este objeto guardará cada tapa con su número de apariciones
-      //let contador = {};
+      //Tenemos un contador de cada aparición de cada tapa en la búsqueda
+      var tapaMasBuscada = 0;
+      var nombreTapa = "";
+      for (var i = 0; i < this.tapasFiltro.length; i++) {
+        if (this.contador[this.tapasFiltro[i]] > tapaMasBuscada) {
+          tapaMasBuscada = this.contador[this.tapasFiltro[i]];
+          nombreTapa = this.tapasFiltro[i];
+        }
+      }
+      //Mostramos el valor en el log solo para dar valor a lo que hemos encontrado y contrastarlo con
+      console.log(
+        "La tapa más buscada es: " +
+          nombreTapa +
+          " con valor: " +
+          tapaMasBuscada
+      );
+      if (this.tapasFiltro.length == 0) {
+        //Ahora llamaremos al método de la búsqueda para esa tapa
+        this.tipoAlerta = "error";
+        this.alerta1 = true;
+        this.textoAlerta = "¡Aún no hay búsquedas guardadas!";
+      } else if (this.tapasFiltro.length != 0) {
+        this.tipoAlerta = "success";
+        this.alerta1 = true;
+        this.textoAlerta = "¡Bares encontrados!";
+        console.log("Intento de buscar bares");
+        axios
+          .post("http://localhost:3000/recomendacion", {
+            tapa: nombreTapa,
+          })
+          .then((response) => {
+            console.log("Datos recibidos: " + response.data.ok);
+            //Llamada exitosa
+            if (response.data.ok == true) {
+              //Solo vamos a devolver un máximo de 3 bares aleatorios que tengan esa tapa
+
+              this.tipoAlerta = "success";
+              this.alerta2 = true;
+              this.textoAlerta = "¡Bares encontrados!";
+
+              console.log("Se han encontrado los bares");
+              setTimeout(() => {
+                this.$router.push({
+                  name: "Bares",
+                  params: {
+                    idUsuario: this.idUsuario,
+                    bares: this.bares,
+                    voyATener: "SI",
+                  },
+                });
+              }, 750);
+            } else {
+              this.tipoAlerta = "error";
+              this.alerta2 = true;
+              this.textoAlerta =
+                "No se han encontrado bares con la tapa más buscada";
+
+              console.log("Fallo en la búsqueda de los bares");
+            }
+          })
+          .catch((error) => {
+            //Error al recoger los bares
+            console.log(error);
+          });
+      }
       /*
       this.$router.push({
         name: "Recomendacion",
@@ -170,7 +235,7 @@ export default {
             this.misTapas.forEach((el) => {
               this.contador[el] = (this.contador[el] || 0) + 1;
             });
-
+            console.log("Contador tapas: ", this.contador);
             for (var cont in this.contador) {
               this.tapasFiltro.push(cont);
               console.log("Tapa: ", cont);

@@ -250,6 +250,84 @@ app.post('/buscarBares', function (req, res) {
 
 });
 
+//Voy a tener TapO'N
+//Buscar los bares en funcion de la tapa más buscada
+app.post('/recomendacion', function (req, res) {
+  console.log('Peticion de buscar bares con la tapa: ', req.body.tapa)
+  const sessionOtra = driver.session();
+  var tapa = req.body.tapa;
+  var bares = [];
+  
+  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa='"+tapa+"' RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas";
+  console.log("Query final: ", query)
+
+  const resultPromise = sessionOtra.run(query).subscribe({
+    onNext: function (record) {
+      var bar = record.get("Bar").properties;
+      if (bar.name != undefined) {
+        if (bar.address == undefined) {
+          bar.address = "No tiene"
+        }
+        if (bar.telephone == undefined) {
+          bar.telephone = "No tiene"
+        }
+        if (bar.web == undefined) {
+          bar.web = "No tiene"
+        }
+        if (bar.perros == undefined) {
+          bar.perros = "No acepta"
+        }
+        if (bar.futbolin == undefined) {
+          bar.futbolin = "No tiene"
+        }
+        if (bar.sidra == undefined) {
+          bar.sidra = "No tiene"
+        }
+        if (bar.cervezaArtesana == undefined) {
+          bar.cervezaArtesana = "No tiene"
+        }
+        if (bar.despedidas == undefined) {
+          bar.despedidas = "No tiene"
+        }
+        if (bar.futbol == undefined) {
+          bar.futbol = "No tiene"
+        }
+        bar.tapas = record.get("Tapas")
+        bares.push(bar);
+      }
+    },
+    onCompleted: function () {
+      if (bares.length == 0) {
+        res.send({ ok: false })
+        console.log('No se han obtenido los bares')
+      }
+      else {
+
+        console.log('Se han encontrado ' + bares.length + ' bares')
+        for (var i = 0; i < bares.length; i++) {
+          console.log("Bar: " + bares[i].name)
+          console.log("Bar: " + bares[i].futbol)
+          console.log("Bar: " + bares[i].perros)
+          console.log("Bar: " + bares[i].despedidas)
+
+          for (var j = 0; j < bares[i].tapas.length; j++) {
+            bares[i].tapas[j] = " " + bares[i].tapas[j]
+          }
+          console.log("Bar: " + bares[i].tapas)
+        }
+        res.json({ ok: true, datos: bares });
+        console.log('Bares obtenidos correctamente')
+
+      }
+    },
+    onError: function (error) {
+      console.log(error);
+    }
+  });
+  //sessionOtra.close();
+
+});
+
 //Buscar los bares en funcion de las tapas seleccionadas
 app.post('/buscarBaresPersonalizados', function (req, res) {
 

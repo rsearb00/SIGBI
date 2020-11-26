@@ -28,9 +28,7 @@
             <v-card-title>{{ bar.name }}</v-card-title>
 
             <v-card-text>
-              <v-row align="center" class="mx-0">
-                
-              </v-row>
+              <v-row align="center" class="mx-0"> </v-row>
 
               <div>Teléfono: {{ bar.telephone }}</div>
               <div>Dirección: {{ bar.address }}</div>
@@ -72,6 +70,7 @@ export default {
     idUsuario: { type: String, default: "ERROR" },
     bares: { type: [], default: "ERROR" },
     personalizada: { type: String, default: "NO" },
+    voyATener: { type: String, default: "NO" },
   },
   components: {
     ToolbarTapON,
@@ -86,14 +85,19 @@ export default {
   }),
   methods: {
     volverATapas: function () {
-      if (this.personalizada == "NO") {
+      if (this.personalizada == "SI") {
         this.$router.push({
-          name: "Tapa",
+          name: "Personalizada",
+          params: { idUsuario: this.idUsuario },
+        });
+      } else if (this.voyATener == "SI") {
+        this.$router.push({
+          name: "Inicio",
           params: { idUsuario: this.idUsuario },
         });
       } else {
         this.$router.push({
-          name: "Personalizada",
+          name: "Tapa",
           params: { idUsuario: this.idUsuario },
         });
       }
