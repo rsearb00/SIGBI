@@ -207,6 +207,7 @@ export default {
           .post("http://localhost:3000/buscarBaresPersonalizados", {
             tapas: this.tapasSeleccionadas,
             propiedades: this.propiedadesSeleccionadas,
+            user: this.idUsuario,
           })
           .then((response) => {
             console.log("Datos recibidos: " + response.data.ok);

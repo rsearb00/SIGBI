@@ -11,7 +11,12 @@
       >{{ title }} {{ idUsuario }}?</v-toolbar-title
     >
     <v-spacer></v-spacer>
-    <v-btn v-if="this.isInicio === false"  class="black--text ma-5" color="white" @click="clickeoInicio()">
+    <v-btn
+      v-if="this.isInicio === false"
+      class="black--text ma-5"
+      color="white"
+      @click="clickeoInicio()"
+    >
       <v-icon color="#4D5E9C" left>mdi-home</v-icon>Inicio
     </v-btn>
     <v-btn class="black--text ma-5" color="white" @click="buscarAmigos()">

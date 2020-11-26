@@ -122,7 +122,7 @@ export default {
     tipoAlerta: "",
     textoAlerta: "",
     ids: [],
-    agregar: false
+    agregar: false,
   }),
   methods: {
     borrarTapasSeleccionadas: function () {
@@ -141,6 +141,7 @@ export default {
         axios
           .post("http://localhost:3000/buscarBares", {
             tapas: this.tapasSeleccionadas,
+            user: this.idUsuario,
           })
           .then((response) => {
             console.log("Datos recibidos: " + response.data.ok);
@@ -237,10 +238,10 @@ export default {
           if (response.data.ok == true) {
             this.misTapas = response.data.datos;
             console.log(response.data + " Tapas recibidas");
-            this.agregar=true;
+            this.agregar = true;
           } else {
             console.log(response.data + " Fallo en la obtención de las tapas");
-            this.agregar=false;
+            this.agregar = false;
           }
         })
         .catch((error) => {
@@ -251,7 +252,7 @@ export default {
     agregarMisTapas: function () {
       //Si buscar Tapas devuelve falso, es porque aún no hay búsquedas
       //Por tanto, agregar será falso
-      if (this.agregar==false) {
+      if (this.agregar == false) {
         console.log(
           "Intento de añadir las tapas por primera vez",
           this.tapasSeleccionadas
@@ -275,7 +276,7 @@ export default {
             //Error al añadir el bar
             console.log(error);
           });
-      } else if (this.agregar==true){
+      } else if (this.agregar == true) {
         console.log(
           "Intento de añadir las tapas habiendo ya otras",
           this.tapasSeleccionadas

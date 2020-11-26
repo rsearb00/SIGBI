@@ -157,6 +157,7 @@ app.post('/buscarBares', function (req, res) {
   console.log('Peticion de buscar bares con las tapas: ', req.body)
   const sessionOtra = driver.session();
   var tapas = req.body.tapas;
+  var user = req.body.user;
   var bares = [];
   //Primera prueba: devolvemos todos los bares que tienen alguna de las tapas seleccionadas porque tenemos pocos en la base
   //MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN ['Picadillo', 'Morcilla', 'Cangrejo']  RETURN b as Bar
@@ -168,7 +169,7 @@ app.post('/buscarBares', function (req, res) {
   //MATCH (b)-[:HASTAPA]->(t:Tapa)
   //WHERE t1.tipoTapa = 'Picadillo' AND t2.tipoTapa='Morcilla' AND t3.tipoTapa ='Cangrejo' RETURN b,t1,t2,t3,t
 
-  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
+  var query = "MATCH (n:Person), (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
   console.log("Query parcial: ", query)
   for (var i = 0; i < tapas.length; i++) {
     if (i + 1 < tapas.length) {
@@ -179,7 +180,7 @@ app.post('/buscarBares', function (req, res) {
     }
   }
   console.log("Query prefinal: ", query)
-  query = query.concat("] RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
+  query = query.concat("] AND n.user='" + user + "' AND NOT exists((n)-[:HASBAR]->(b)) RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
   console.log("Query final: ", query)
 
 
@@ -256,9 +257,10 @@ app.post('/recomendacion', function (req, res) {
   console.log('Peticion de buscar bares con la tapa: ', req.body.tapa)
   const sessionOtra = driver.session();
   var tapa = req.body.tapa;
+  var user = req.body.user;
   var bares = [];
-  
-  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa='"+tapa+"' RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas";
+
+  var query = "MATCH (n:Person), (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa='" + tapa + "' AND n.user='" + user + "' AND NOT exists((n)-[:HASBAR]->(b)) RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas";
   console.log("Query final: ", query)
 
   const resultPromise = sessionOtra.run(query).subscribe({
@@ -330,15 +332,15 @@ app.post('/recomendacion', function (req, res) {
 
 //Buscar los bares en funcion de las tapas seleccionadas
 app.post('/buscarBaresPersonalizados', function (req, res) {
-
   const sessionOtra = driver.session();
   var tapas = req.body.tapas;
   var propiedades = req.body.propiedades;
+  var user = req.body.user;
   var bares = [];
   console.log('Peticion de buscar bares con las tapas: ', tapas)
   console.log('Y las propiedades: ', propiedades)
 
-  var query = "MATCH (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
+  var query = "MATCH (n:Person), (b:Bar)-[:HASTAPA]->(t:Tapa) MATCH (b)-[:HASTAPA]->(t2:Tapa) WHERE t.tipoTapa IN [";
   console.log("Query parcial: ", query)
   //Primero metemos las tapas en el array
   for (var i = 0; i < tapas.length; i++) {
@@ -375,7 +377,7 @@ app.post('/buscarBaresPersonalizados', function (req, res) {
       query = query.concat("AND b.futbolin='si' ");
     }
   }
-  query = query.concat(" RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
+  query = query.concat(" AND n.user='" + user + "' AND NOT exists((n)-[:HASBAR]->(b)) RETURN DISTINCT b as Bar, collect(t2.tipoTapa) as Tapas");
   console.log("Query final: ", query)
 
 
@@ -467,8 +469,27 @@ app.post('/agregarBar', function (req, res) {
 });
 
 
+//Método que borra un bar de la lista de mis bares
+app.post('/borrarBar', function (req, res) {
+  // Devolver todos si se para un json vacio
+  var bar = req.body.bar;
+  var user = req.body.user;
+  console.log('Peticion de borrar el bar: ', req.body)
+
+  //Usamos Merge, si ya existía la relación no la crea, si no existía, sí
+  var query = "MATCH (n:Person)-[rel:HASBAR]->(b:Bar) WHERE n.user='" + user + "' AND b.name='" + bar + "' DELETE rel";
+
+  console.log('Query: ', query)
+
+  const resultPromise = session.run(query);
+  resultPromise.then(result => {
+    res.json({ ok: true })
+    console.log('Se ha borrado la relación')
+  })
+});
+
+
 //Método que agrega una tapa a la lista de Mis Tapas
-//No funciona todavía
 app.post('/agregarMisTapas', function (req, res) {
   // Devolver todos si se para un json vacio
   var tapas = req.body.tapas;
@@ -479,22 +500,12 @@ app.post('/agregarMisTapas', function (req, res) {
   if (tapas.length == 1) {
     console.log('Tapas 0: ' + tapas[0])
   }
-  //Falla, hay que hacerlo todo en una consulta
-  // var query = "";
-  /*for (var i = 0; i < tapas.length; i++) {
-    query = query.concat("MATCH (n:Person), (t:Tapa) WHERE n.user='" + user + "' AND t.tipoTapa='" + tapas[i] + "' CREATE (n)-[:HASSEARCHED]->(t);\n");
-
-
-  }*/
   var query = "MATCH (n:Person) WHERE n.user='" + user + "' SET n.misTapas =";
 
   //Si aún no tiene tapas guardadas:
   if (nuevo == true) {
     query = query.concat("[")
-    /*if(tapas.length==1){
-      query = query.concat("'" + tapas[0] + "'")
-      
-    }*/
+
     for (var i = 0; i < tapas.length; i++) {
       console.log('Tapas ' + i + " " + tapas[i])
       if (i == 0)
@@ -545,15 +556,10 @@ app.post('/misTapas', function (req, res) {
         console.log('No se han obtenido las tapas')
       }
       else {
-        //var arrayTapas = tapas.split(",")
-        //console.log('Se han encontrado ' + arrayTapas.length + ' tapas')
-        //for (var i = 0; i < arrayTapas.length; i++) {
 
-          console.log("Tapas: " + tapas)
-        //}
+        console.log("Tapas: " + tapas)
         res.json({ ok: true, datos: tapas[0] });
         console.log('Tapas obtenidas correctamente')
-
       }
     },
     onError: function (error) {

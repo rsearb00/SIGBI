@@ -22,7 +22,7 @@
         Voy a tener TapO'N
       </v-btn>
       <v-alert :type="tipoAlerta" v-if="alerta1" dismissible>{{
-        textoAlerta
+        textoAlerta1
       }}</v-alert>
     </div>
 
@@ -54,6 +54,9 @@
         <v-toolbar-title>Mis Bares:</v-toolbar-title>
       </v-toolbar>
     </div>
+    <v-alert :type="tipoAlerta" v-if="alerta" dismissible>{{
+      textoAlerta2
+    }}</v-alert>
     <v-flex d-flex>
       <v-layout wrap>
         <v-flex md4 v-for="bar in bares" :key="bar">
@@ -117,14 +120,16 @@ export default {
     FooterTapON,
   },
   data: () => ({
+    alerta: false,
     alerta1: false,
     tipoAlerta: "",
-    textoAlerta: "",
+    textoAlerta1: "",
+    textoAlerta2: "",
     misTapas: [],
     bares: [],
+    baresReco:[],
     contador: {},
     tapasFiltro: [],
-    //tapasSinFiltro: [],
   }),
   methods: {
     tapa: function () {
@@ -161,25 +166,25 @@ export default {
         //Ahora llamaremos al método de la búsqueda para esa tapa
         this.tipoAlerta = "error";
         this.alerta1 = true;
-        this.textoAlerta = "¡Aún no hay búsquedas guardadas!";
+        this.textoAlerta1 = "¡Aún no hay búsquedas guardadas!";
       } else if (this.tapasFiltro.length != 0) {
         this.tipoAlerta = "success";
         this.alerta1 = true;
-        this.textoAlerta = "¡Bares encontrados!";
+        this.textoAlerta1 = "¡Bares encontrados!";
         console.log("Intento de buscar bares");
         axios
           .post("http://localhost:3000/recomendacion", {
             tapa: nombreTapa,
+            user: this.idUsuario,
           })
           .then((response) => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
-              //Solo vamos a devolver un máximo de 3 bares aleatorios que tengan esa tapa
-
+              this.baresReco = response.data.datos;
               this.tipoAlerta = "success";
               this.alerta2 = true;
-              this.textoAlerta = "¡Bares encontrados!";
+              this.textoAlerta1 = "¡Bares encontrados!";
 
               console.log("Se han encontrado los bares");
               setTimeout(() => {
@@ -187,7 +192,7 @@ export default {
                   name: "Bares",
                   params: {
                     idUsuario: this.idUsuario,
-                    bares: this.bares,
+                    bares: this.baresReco,
                     voyATener: "SI",
                   },
                 });
@@ -195,7 +200,7 @@ export default {
             } else {
               this.tipoAlerta = "error";
               this.alerta2 = true;
-              this.textoAlerta =
+              this.textoAlerta1 =
                 "No se han encontrado bares con la tapa más buscada";
 
               console.log("Fallo en la búsqueda de los bares");
@@ -272,15 +277,15 @@ export default {
         });
     },
     borrarBar: function (nombreBar) {
-      //Primero comprobamos que se ha seleccionado al ç un bar
+      //Primero comprobamos que se ha seleccionado un bar
       if (nombreBar != "") {
         this.tipoAlerta = "success";
         this.alerta = true;
-        this.textoAlerta = "Se ha seleccionado el bar " + nombreBar;
+        this.textoAlerta2 = "Se ha seleccionado el bar " + nombreBar;
 
         console.log("Intento de borrar el bar");
-        axios;
-        /* .post("http://localhost:3000/agregarBar", {
+        axios
+          .post("http://localhost:3000/borrarBar", {
             bar: nombreBar,
             user: this.idUsuario,
           })
@@ -290,21 +295,23 @@ export default {
             if (response.data.ok == true) {
               this.tipoAlerta = "success";
               this.alerta = true;
-              this.textoAlerta = "¡Bar añadido correctamente!";
+              this.textoAlerta2 = "¡Bar borrado correctamente!";
 
-              console.log("Se ha añadido el bar");
+              console.log("Se ha borrado el bar");
+              //Si se borra correctamente, cargamos de nuevo todos los bares
+              this.cargarMisBares();
             } else {
               this.tipoAlerta = "error";
               this.alerta = true;
-              this.textoAlerta = "No se ha podido añadir el bar";
+              this.textoAlerta2 = "No se ha podido borrar el bar";
 
-              console.log("Fallo en la agregación del bar");
+              console.log("Fallo en el borrado del bar");
             }
           })
           .catch((error) => {
-            //Error al añadir el bar
+            //Error al borrar el bar
             console.log(error);
-          });*/
+          });
       }
     },
   },

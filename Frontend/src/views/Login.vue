@@ -44,7 +44,11 @@
                 <v-btn dark color="#4D5E9C" @click="registrarse()"
                   >Registrarse</v-btn
                 >
-                <v-btn dark color="#4D5E9C" @keyup.enter="iniciarSesion()" @click="iniciarSesion()"
+                <v-btn
+                  dark
+                  color="#4D5E9C"
+                  @keyup.enter="iniciarSesion()"
+                  @click="iniciarSesion()"
                   >Iniciar Sesión</v-btn
                 >
               </v-card-actions>
