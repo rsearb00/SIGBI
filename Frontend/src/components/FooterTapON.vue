@@ -1,5 +1,5 @@
 <template>
-  <v-footer app dark padless inset>
+  <v-footer app dark padless inset >
     <v-card class="flex" flat tile>
       <v-card-text class="py-2 white--text text-center">
         {{ new Date().getFullYear() }} - @<strong>TapO'N</strong>

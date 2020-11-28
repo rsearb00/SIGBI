@@ -8,7 +8,7 @@
               textoAlerta
             }}</v-alert>
             <v-card class="elevation-12">
-              <v-toolbar color="#4D5E9C" dark flat>
+              <v-toolbar color="#FA37DD" dark flat>
                 <v-toolbar-title>Registro</v-toolbar-title>
                 <v-spacer />
                 <v-img
@@ -47,10 +47,10 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn dark color="#4D5E9C" @click="iniciarSesion()">
+                <v-btn dark color="#7A1B6C" @click="iniciarSesion()">
                   <v-icon>mdi-arrow-left</v-icon>
                 </v-btn>
-                <v-btn dark color="#4D5E9C" @click="crearUsuario()"
+                <v-btn dark color="#7A1B6C" @click="crearUsuario()"
                   >Registrarme</v-btn
                 >
               </v-card-actions>

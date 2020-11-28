@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app clipped-left dark color="#4D5E9C">
+  <v-app-bar app clipped-left dark color="#FA37DD">
     <v-img
       :src="require(`@/assets/LogoTapON.png`)"
       alt
@@ -17,17 +17,15 @@
       color="white"
       @click="clickeoInicio()"
     >
-      <v-icon color="#4D5E9C" left>mdi-home</v-icon>Inicio
+      <v-icon color="#7A4272" left>mdi-home</v-icon>Inicio
     </v-btn>
-    <v-btn class="black--text ma-5" color="white" @click="buscarAmigos()">
-      <v-icon color="#4D5E9C" left>mdi-account-plus</v-icon>Buscar Amigos
-    </v-btn>
+    
     <v-btn
       class="black--text ma-5"
       color="white"
       @click="clickeoCerrarSesion()"
     >
-      <v-icon color="#4D5E9C" left>mdi-login</v-icon>Cerrar Sesión
+      <v-icon color="#7A4272" left>mdi-login</v-icon>Cerrar Sesión
     </v-btn>
   </v-app-bar>
 </template>

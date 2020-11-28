@@ -8,7 +8,7 @@
               textoAlerta
             }}</v-alert>
             <v-card class="elevation-12">
-              <v-toolbar color="#4D5E9C" dark flat>
+              <v-toolbar color="#FA37DD" dark flat>
                 <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
                 <v-spacer />
                 <v-img
@@ -41,12 +41,12 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn dark color="#4D5E9C" @click="registrarse()"
+                <v-btn dark color="#7A1B6C" @click="registrarse()"
                   >Registrarse</v-btn
                 >
                 <v-btn
                   dark
-                  color="#4D5E9C"
+                  color="#7A1B6C"
                   @keyup.enter="iniciarSesion()"
                   @click="iniciarSesion()"
                   >Iniciar Sesión</v-btn
