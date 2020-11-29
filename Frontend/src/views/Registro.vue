@@ -21,27 +21,34 @@
               <v-card-text>
                 <v-form>
                   <v-text-field
+                    color="#7A4272"
                     label="Nombre de Usuario"
                     name="login"
                     prepend-icon="mdi-account"
                     type="text"
                     v-model="id"
+                    v-on:keyup.enter="crearUsuario()"
                   />
                   <v-text-field
+                    color="#7A4272"
                     label="Nombre Completo"
                     name="login"
-                    prepend-icon="mdi-account"
+                    prepend-icon="mdi-account-details"
                     type="text"
                     v-model="nombreCompleto"
+                    v-on:keyup.enter="crearUsuario()"
                   />
                   <v-text-field
+                    color="#7A4272"
                     id="password"
                     label="Contraseña"
                     name="password"
                     prepend-icon="mdi-lock"
-                    type="password"
+                    :append-icon="mostrarPass ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="mostrarPass ? 'text' : 'password'"
                     v-model="contrasenya"
-                    v-on:keyup.enter="clickeo"
+                    v-on:keyup.enter="crearUsuario()"
+                    @click:append="mostrarPass = !mostrarPass"
                   />
                 </v-form>
               </v-card-text>
@@ -71,18 +78,19 @@ export default {
   data: () => ({
     id: "",
     contrasenya: "",
+    mostrarPass: false,
     nombreCompleto: "",
     alerta: false,
     tipoAlerta: "",
-    textoAlerta: ""
+    textoAlerta: "",
   }),
   methods: {
-    iniciarSesion: function() {
+    iniciarSesion: function () {
       this.$router.push({
-        name: "Login"
+        name: "Login",
       });
     },
-    crearUsuario: function() {
+    crearUsuario: function () {
       this.alerta = false;
       if (
         this.id == "" &&
@@ -107,9 +115,9 @@ export default {
           .post("http://localhost:3000/registro", {
             user: this.id,
             password: this.contrasenya,
-            name: this.nombreCompleto
+            name: this.nombreCompleto,
           })
-          .then(response => {
+          .then((response) => {
             //Llamada exitosa
             if (response.data.ok) {
               this.tipoAlerta = "success";
@@ -118,7 +126,7 @@ export default {
               this.textoAlerta = "¡Usuario " + this.id + " creado!";
               setTimeout(() => {
                 this.$router.push({
-                  name: "Login"
+                  name: "Login",
                 });
               }, 1000);
             } else {
@@ -128,14 +136,14 @@ export default {
               console.log(response.data.ok + " Fallo en el registro");
             }
           })
-          .catch(alerta => {
+          .catch((alerta) => {
             //alerta
             console.log(alerta);
           });
       }
-    }
+    },
   },
-  mounted: function() {}
+  mounted: function () {},
 };
 </script>
 

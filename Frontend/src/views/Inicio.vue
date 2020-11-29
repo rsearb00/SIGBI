@@ -1,5 +1,5 @@
 <template>
-  <v-app id="keep" >
+  <v-app id="keep">
     <ToolbarTapON v-bind:idUsuario="idUsuario" v-bind:isInicio="true" />
     <div class="text-center">
       <v-btn class="ma-2" elevation="5" dark color="#7A1B6C" @click="tapa()">
