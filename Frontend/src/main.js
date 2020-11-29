@@ -10,5 +10,6 @@ new Vue({
   router,
   store,
   vuetify,
+  icon: "/assets/iconTapON.png",
   render: h => h(App)
 }).$mount("#app");

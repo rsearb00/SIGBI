@@ -1,5 +1,5 @@
 <template>
-  <v-app id="keep">
+  <v-app id="keep" >
     <ToolbarTapON v-bind:idUsuario="idUsuario" v-bind:isInicio="true" />
     <div class="text-center">
       <v-btn class="ma-2" elevation="5" dark color="#7A1B6C" @click="tapa()">
@@ -50,7 +50,7 @@
         </v-flex>
       </v-layout>
     </v-flex>
-
+    <v-divider></v-divider>
     <div class="text-center">
       <v-toolbar class="text-center" color="purple" dark>
         <v-toolbar-title>Mis Bares:</v-toolbar-title>
@@ -115,11 +115,11 @@ import FooterTapON from "@/components/FooterTapON";
 export default {
   props: {
     idUsuario: { type: String, default: "ERROR" },
-    isInicio: { type: Boolean, default: false },
+    isInicio: { type: Boolean, default: false }
   },
   components: {
     ToolbarTapON,
-    FooterTapON,
+    FooterTapON
   },
   data: () => ({
     alerta: false,
@@ -129,24 +129,24 @@ export default {
     textoAlerta2: "",
     misTapas: [],
     bares: [],
-    baresReco:[],
+    baresReco: [],
     contador: {},
-    tapasFiltro: [],
+    tapasFiltro: []
   }),
   methods: {
-    tapa: function () {
+    tapa: function() {
       this.$router.push({
         name: "Tapa",
-        params: { idUsuario: this.idUsuario },
+        params: { idUsuario: this.idUsuario }
       });
     },
-    personalizada: function () {
+    personalizada: function() {
       this.$router.push({
         name: "Personalizada",
-        params: { idUsuario: this.idUsuario },
+        params: { idUsuario: this.idUsuario }
       });
     },
-    recomendacion: function () {
+    recomendacion: function() {
       //Aquí usaremos el algoritmo de recomendación planteado
       //Tenemos un contador de cada aparición de cada tapa en la búsqueda
       var tapaMasBuscada = 0;
@@ -177,9 +177,9 @@ export default {
         axios
           .post("http://localhost:3000/recomendacion", {
             tapa: nombreTapa,
-            user: this.idUsuario,
+            user: this.idUsuario
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -195,8 +195,8 @@ export default {
                   params: {
                     idUsuario: this.idUsuario,
                     bares: this.baresReco,
-                    voyATener: "SI",
-                  },
+                    voyATener: "SI"
+                  }
                 });
               }, 750);
             } else {
@@ -208,7 +208,7 @@ export default {
               console.log("Fallo en la búsqueda de los bares");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al recoger los bares
             console.log(error);
           });
@@ -220,26 +220,26 @@ export default {
       });*/
     },
 
-    random: function () {
+    random: function() {
       this.$router.push({
         name: "Random",
-        params: { idUsuario: this.idUsuario },
+        params: { idUsuario: this.idUsuario }
       });
     },
-    cargarMisTapas: function () {
+    cargarMisTapas: function() {
       console.log("Intento de mostrar las tapas");
       axios
         .post("http://localhost:3000/misTapas", {
-          user: this.idUsuario,
+          user: this.idUsuario
         })
-        .then((response) => {
+        .then(response => {
           console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
             this.misTapas = response.data.datos;
             console.log(response.data + " Tapas recibidas");
 
-            this.misTapas.forEach((el) => {
+            this.misTapas.forEach(el => {
               this.contador[el] = (this.contador[el] || 0) + 1;
             });
             console.log("Contador tapas: ", this.contador);
@@ -252,18 +252,18 @@ export default {
             console.log(response.data + " Fallo en la obtención de las tapas");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           //Error al recoger las tapas
           console.log(error);
         });
     },
-    cargarMisBares: function () {
+    cargarMisBares: function() {
       console.log("Intento de mostrar los bares");
       axios
         .post("http://localhost:3000/misBares", {
-          user: this.idUsuario,
+          user: this.idUsuario
         })
-        .then((response) => {
+        .then(response => {
           console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
@@ -273,12 +273,12 @@ export default {
             console.log(response.data + " Fallo en la obtención de los bares");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           //Error al recoger los bares
           console.log(error);
         });
     },
-    borrarBar: function (nombreBar) {
+    borrarBar: function(nombreBar) {
       //Primero comprobamos que se ha seleccionado un bar
       if (nombreBar != "") {
         this.tipoAlerta = "success";
@@ -289,9 +289,9 @@ export default {
         axios
           .post("http://localhost:3000/borrarBar", {
             bar: nombreBar,
-            user: this.idUsuario,
+            user: this.idUsuario
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -310,17 +310,17 @@ export default {
               console.log("Fallo en el borrado del bar");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al borrar el bar
             console.log(error);
           });
       }
-    },
+    }
   },
-  mounted: function () {
+  mounted: function() {
     this.cargarMisBares();
     this.cargarMisTapas();
-  },
+  }
 };
 </script>
 

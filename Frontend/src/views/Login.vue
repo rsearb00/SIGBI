@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="inspire" >
     <v-content>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
@@ -8,7 +8,7 @@
               textoAlerta
             }}</v-alert>
             <v-card class="elevation-12">
-              <v-toolbar color="#FA37DD" dark flat>
+              <v-toolbar color="#E05EDC" dark flat>
                 <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
                 <v-spacer />
                 <v-img
@@ -71,15 +71,15 @@ export default {
     contrasenya: "",
     alerta: false,
     tipoAlerta: "",
-    textoAlerta: "",
+    textoAlerta: ""
   }),
   methods: {
-    registrarse: function () {
+    registrarse: function() {
       this.$router.push({
-        name: "Registro",
+        name: "Registro"
       });
     },
-    iniciarSesion: function () {
+    iniciarSesion: function() {
       this.alerta = false;
       if (this.id == "" && this.contrasenya == "") {
         this.tipoAlerta = "error";
@@ -99,9 +99,9 @@ export default {
         axios
           .post("http://localhost:3000/login", {
             user: this.id,
-            password: this.contrasenya,
+            password: this.contrasenya
           })
-          .then((response) => {
+          .then(response => {
             //Llamada exitosa
             if (response.data.ok) {
               this.tipoAlerta = "success";
@@ -111,7 +111,7 @@ export default {
               setTimeout(() => {
                 this.$router.push({
                   name: "Inicio",
-                  params: { idUsuario: this.id },
+                  params: { idUsuario: this.id }
                 });
               }, 750);
             } else {
@@ -121,14 +121,14 @@ export default {
               console.log(response.data.ok + " Fallo en el inicio de sesión");
             }
           })
-          .catch((alerta) => {
+          .catch(alerta => {
             //alerta
             console.log(alerta);
           });
       }
-    },
+    }
   },
-  mounted: function () {},
+  mounted: function() {}
 };
 </script>
 

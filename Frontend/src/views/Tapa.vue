@@ -40,7 +40,7 @@
                         <v-checkbox
                           :input-value="active"
                           :true-value="tapa"
-                          color="#4D5E9C"
+                          color="#7A4272"
                           @click="active, toggle"
                         ></v-checkbox>
                       </v-list-item-action>
@@ -79,7 +79,7 @@
             </v-list>
             <v-fab-transition>
               <v-btn
-                color="#4D5E9C"
+                color="#E05EDC"
                 dark
                 absolute
                 right
@@ -104,11 +104,11 @@ import ToolbarTapON from "@/components/ToolbarTapON";
 import FooterTapON from "@/components/FooterTapON";
 export default {
   props: {
-    idUsuario: { type: String, default: "ERROR" },
+    idUsuario: { type: String, default: "ERROR" }
   },
   components: {
     ToolbarTapON,
-    FooterTapON,
+    FooterTapON
   },
   data: () => ({
     buscar: "",
@@ -122,13 +122,13 @@ export default {
     tipoAlerta: "",
     textoAlerta: "",
     ids: [],
-    agregar: false,
+    agregar: false
   }),
   methods: {
-    borrarTapasSeleccionadas: function () {
+    borrarTapasSeleccionadas: function() {
       this.tapasSeleccionadas = [];
     },
-    buscarBares: function () {
+    buscarBares: function() {
       //Primero comprobamos que se ha seleccionado al menos una tapa
       if (this.tapasSeleccionadas.length == 0) {
         this.tipoAlerta = "error";
@@ -141,9 +141,9 @@ export default {
         axios
           .post("http://localhost:3000/buscarBares", {
             tapas: this.tapasSeleccionadas,
-            user: this.idUsuario,
+            user: this.idUsuario
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -156,7 +156,7 @@ export default {
               setTimeout(() => {
                 this.$router.push({
                   name: "Bares",
-                  params: { idUsuario: this.idUsuario, bares: this.bares },
+                  params: { idUsuario: this.idUsuario, bares: this.bares }
                 });
               }, 750);
             } else {
@@ -168,20 +168,20 @@ export default {
               console.log("Fallo en la búsqueda de los bares");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al recoger los bares
             console.log(error);
           });
       }
     },
-    buscarTapas: function () {
+    buscarTapas: function() {
       //Si está vacío, obtenemos todas las tapas
       if (this.buscar == "") {
         //Obtenemos todas las tapas por pantalla al cargar la página
         console.log("Intento de mostrar las tapas");
         axios
           .post("http://localhost:3000/tapas", {})
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -193,7 +193,7 @@ export default {
               );
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al recoger las tapas
             console.log(error);
           });
@@ -204,9 +204,9 @@ export default {
         console.log("Intento de buscar tapa");
         axios
           .post("http://localhost:3000/buscarTapas", {
-            tapa: this.buscar,
+            tapa: this.buscar
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -220,19 +220,19 @@ export default {
               console.log("Fallo en la búsqueda de las tapas");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al recoger los bares
             console.log(error);
           });
       }
     },
-    buscarMisTapas: function () {
+    buscarMisTapas: function() {
       console.log("Intento de mostrar las tapas");
       axios
         .post("http://localhost:3000/misTapas", {
-          user: this.idUsuario,
+          user: this.idUsuario
         })
-        .then((response) => {
+        .then(response => {
           console.log("Datos recibidos: " + response);
           //Llamada exitosa
           if (response.data.ok == true) {
@@ -244,12 +244,12 @@ export default {
             this.agregar = false;
           }
         })
-        .catch((error) => {
+        .catch(error => {
           //Error al recoger las tapas
           console.log(error);
         });
     },
-    agregarMisTapas: function () {
+    agregarMisTapas: function() {
       //Si buscar Tapas devuelve falso, es porque aún no hay búsquedas
       //Por tanto, agregar será falso
       if (this.agregar == false) {
@@ -261,9 +261,9 @@ export default {
           .post("http://localhost:3000/agregarMisTapas", {
             tapas: this.tapasSeleccionadas,
             user: this.idUsuario,
-            nuevo: true,
+            nuevo: true
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -272,7 +272,7 @@ export default {
               console.log("Fallo en la agregación de las tapas");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al añadir el bar
             console.log(error);
           });
@@ -285,9 +285,9 @@ export default {
           .post("http://localhost:3000/agregarMisTapas", {
             tapas: this.tapasSeleccionadas,
             user: this.idUsuario,
-            nuevo: false,
+            nuevo: false
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -296,17 +296,17 @@ export default {
               console.log("Fallo en la agregación de las tapas");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al añadir el bar
             console.log(error);
           });
       }
-    },
+    }
   },
-  mounted: function () {
+  mounted: function() {
     this.buscarTapas();
     this.buscarMisTapas();
-  },
+  }
 };
 </script>
 
@@ -315,4 +315,3 @@ export default {
   display: none;
 }
 </style>
-

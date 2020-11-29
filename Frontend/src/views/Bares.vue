@@ -70,35 +70,35 @@ export default {
     idUsuario: { type: String, default: "ERROR" },
     bares: { type: [], default: "ERROR" },
     personalizada: { type: String, default: "NO" },
-    voyATener: { type: String, default: "NO" },
+    voyATener: { type: String, default: "NO" }
   },
   components: {
     ToolbarTapON,
-    FooterTapON,
+    FooterTapON
   },
   data: () => ({
     tapas: [],
     bares: [],
     alerta: false,
     tipoAlerta: "",
-    textoAlerta: "",
+    textoAlerta: ""
   }),
   methods: {
-    volverATapas: function () {
+    volverATapas: function() {
       if (this.personalizada == "SI") {
         this.$router.push({
           name: "Personalizada",
-          params: { idUsuario: this.idUsuario },
+          params: { idUsuario: this.idUsuario }
         });
       } else if (this.voyATener == "SI") {
         this.$router.push({
           name: "Inicio",
-          params: { idUsuario: this.idUsuario },
+          params: { idUsuario: this.idUsuario }
         });
       } else {
         this.$router.push({
           name: "Tapa",
-          params: { idUsuario: this.idUsuario },
+          params: { idUsuario: this.idUsuario }
         });
       }
     },
@@ -107,7 +107,7 @@ export default {
 
       setTimeout(() => (this.loading = false), 2000);
     },
-    agregarBar: function (nombreBar) {
+    agregarBar: function(nombreBar) {
       //Primero comprobamos que se ha seleccionado un bar
       if (nombreBar != "") {
         this.tipoAlerta = "success";
@@ -118,9 +118,9 @@ export default {
         axios
           .post("http://localhost:3000/agregarBar", {
             bar: nombreBar,
-            user: this.idUsuario,
+            user: this.idUsuario
           })
-          .then((response) => {
+          .then(response => {
             console.log("Datos recibidos: " + response.data.ok);
             //Llamada exitosa
             if (response.data.ok == true) {
@@ -137,14 +137,14 @@ export default {
               console.log("Fallo en la agregación del bar");
             }
           })
-          .catch((error) => {
+          .catch(error => {
             //Error al añadir el bar
             console.log(error);
           });
       }
-    },
+    }
   },
-  mounted: function () {},
+  mounted: function() {}
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app clipped-left dark color="#FA37DD">
+  <v-app-bar app clipped-left dark color="#E05EDC">
     <v-img
       :src="require(`@/assets/LogoTapON.png`)"
       alt
@@ -19,7 +19,7 @@
     >
       <v-icon color="#7A4272" left>mdi-home</v-icon>Inicio
     </v-btn>
-    
+
     <v-btn
       class="black--text ma-5"
       color="white"
@@ -33,26 +33,26 @@
 <script>
 export default {
   data: () => ({
-    title: "¿Qué te apetece hacer hoy, ",
+    title: "¿Qué te apetece hacer hoy, "
   }),
   props: {
     idUsuario: { type: String, default: "ERROR" },
-    isInicio: { type: Boolean, default: false },
+    isInicio: { type: Boolean, default: false }
   },
   components: {},
   methods: {
-    buscarAmigos: function () {},
-    clickeoInicio: function () {
+    buscarAmigos: function() {},
+    clickeoInicio: function() {
       if (!this.isInicio) {
         this.$router.push({
           name: "Inicio",
-          params: { idUsuario: this.idUsuario, isInicio: true },
+          params: { idUsuario: this.idUsuario, isInicio: true }
         });
       }
     },
-    clickeoCerrarSesion: function () {
+    clickeoCerrarSesion: function() {
       this.$router.push("/");
-    },
-  },
+    }
+  }
 };
 </script>
