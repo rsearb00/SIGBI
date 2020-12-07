@@ -13,7 +13,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
@@ -76,8 +75,6 @@ app.post('/tapas', function (req, res) {
 
   const resultPromise = session.run(query);
   resultPromise.then(result => {
-    //session.close();
-
     if (result.records.length == 0) {
       res.send({ ok: false })
       console.log('No se han obtenido las tapas')
@@ -92,36 +89,11 @@ app.post('/tapas', function (req, res) {
         tapasFiltro.push(tapas[i]._fields[0])
       }
       res.json({ ok: true, datos: tapasFiltro });
-      /*try {
-        var tapas = [];
-        for (var i = 0; i < result.records.length; i++) {
-          const unaTapa = result.records[i].get(i).properties.tipoTapa;
-          console.log(unaTapa)
-          tapas.push(unaTapa)
-        }
-        //res.send({ ok: true }, tapas)
-      }
-      finally {
-        console.log('Fallo en la obtención')
-      }*/
-      /* for (var i = 0; i <result.records.length; i++) {
-         unaTapa=result.records[i].get(i).properties.tipoTapa
-         console.log(unatapa)
-         tapas.push(unaTapa)
-      }*/
-      /*res.json({ ok: true, datos: data });
-      const singleRecord = result.records[0]
-    const unatapa = singleRecord.get(0)
-*/
-      //console.log(unatapa.properties.tipoTapa)
-      /* var record = result.records.get.properties.tipoTapa;
-       res.send(record);
-       console.log('Tapas obtenidas correctamente: ', record)*/
     }
-
   })
 });
 
+//Búsqueda de tapas por texto
 app.post('/buscarTapas', function (req, res) {
   // Devolver todos si se para un json vacio
   console.log('Peticion de buscar tapas que contengan: ', req.body.tapa)
@@ -150,7 +122,6 @@ app.post('/buscarTapas', function (req, res) {
     }
   })
 });
-
 
 //Buscar los bares en funcion de las tapas seleccionadas
 app.post('/buscarBares', function (req, res) {
@@ -448,7 +419,6 @@ app.post('/buscarBaresPersonalizados', function (req, res) {
 
 });
 
-
 //Método que agrega un bar a la lista de mis bares
 app.post('/agregarBar', function (req, res) {
   // Devolver todos si se para un json vacio
@@ -468,7 +438,6 @@ app.post('/agregarBar', function (req, res) {
   })
 });
 
-
 //Método que borra un bar de la lista de mis bares
 app.post('/borrarBar', function (req, res) {
   // Devolver todos si se para un json vacio
@@ -487,7 +456,6 @@ app.post('/borrarBar', function (req, res) {
     console.log('Se ha borrado la relación')
   })
 });
-
 
 //Método que agrega una tapa a la lista de Mis Tapas
 app.post('/agregarMisTapas', function (req, res) {
@@ -569,7 +537,6 @@ app.post('/misTapas', function (req, res) {
   //sessionOtra.close();
 });
 
-
 //Buscar Mis Bares
 app.post('/misBares', function (req, res) {
   // Devolver todos si se para un json vacio
@@ -647,11 +614,6 @@ app.post('/misBares', function (req, res) {
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
-});
-
-//Prueba de neo4j
-app.post('/usuario', function (req, res) {
-
 });
 
 app.listen(port, () => {

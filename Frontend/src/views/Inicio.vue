@@ -157,7 +157,7 @@ export default {
           nombreTapa = this.tapasFiltro[i];
         }
       }
-      //Mostramos el valor en el log solo para dar valor a lo que hemos encontrado y contrastarlo con
+      //Mostramos el valor en el log solo para dar valor a lo que hemos encontrado
       console.log(
         "La tapa más buscada es: " +
           nombreTapa +
@@ -213,19 +213,8 @@ export default {
             console.log(error);
           });
       }
-      /*
-      this.$router.push({
-        name: "Recomendacion",
-        params: { idUsuario: this.idUsuario },
-      });*/
     },
 
-    random: function() {
-      this.$router.push({
-        name: "Random",
-        params: { idUsuario: this.idUsuario }
-      });
-    },
     cargarMisTapas: function() {
       console.log("Intento de mostrar las tapas");
       axios
@@ -270,6 +259,7 @@ export default {
             this.bares = response.data.datos;
             console.log(response.data + " Bares recibidos");
           } else {
+            this.bares = [];
             console.log(response.data + " Fallo en la obtención de los bares");
           }
         })
@@ -297,7 +287,7 @@ export default {
             if (response.data.ok == true) {
               this.tipoAlerta = "success";
               this.alerta = true;
-              this.textoAlerta2 = "¡Bar borrado correctamente!";
+              this.textoAlerta2 = "¡Bar "+ nombreBar + " borrado correctamente!";
 
               console.log("Se ha borrado el bar");
               //Si se borra correctamente, cargamos de nuevo todos los bares

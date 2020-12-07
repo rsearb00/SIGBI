@@ -102,11 +102,6 @@ export default {
         });
       }
     },
-    reserve() {
-      this.loading = true;
-
-      setTimeout(() => (this.loading = false), 2000);
-    },
     agregarBar: function(nombreBar) {
       //Primero comprobamos que se ha seleccionado un bar
       if (nombreBar != "") {
@@ -126,7 +121,7 @@ export default {
             if (response.data.ok == true) {
               this.tipoAlerta = "success";
               this.alerta = true;
-              this.textoAlerta = "¡Bar añadido correctamente!";
+              this.textoAlerta = "¡Bar " + nombreBar + " añadido correctamente!";
 
               console.log("Se ha añadido el bar");
             } else {

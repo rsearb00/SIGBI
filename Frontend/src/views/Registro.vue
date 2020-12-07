@@ -126,7 +126,8 @@ export default {
               this.textoAlerta = "¡Usuario " + this.id + " creado!";
               setTimeout(() => {
                 this.$router.push({
-                  name: "Login",
+                  name: "Inicio",
+                  params: { idUsuario: this.id },
                 });
               }, 1000);
             } else {
