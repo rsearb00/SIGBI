@@ -26,8 +26,7 @@ La versión con la que está probada la aplicación es la 4.1.1 (importante)
 
 
 
-- Backend
-Los pasos a seguir en este punto son fáciles:
+- Backend - Los pasos a seguir en este punto son fáciles:
 
 1 - Acceder mediante una terminal a la ubicación donde hemos descargado el repositorio
 
@@ -41,8 +40,7 @@ Los pasos a seguir en este punto son fáciles:
 
 
 
-- Frontend
-Los pasos a seguir en este punto son similares a los del back:
+- Frontend - Los pasos a seguir en este punto son similares a los del back:
 
 1 - Acceder mediante una terminal a la ubicación donde hemos descargado el repositorio
 
