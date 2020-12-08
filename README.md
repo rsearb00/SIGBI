@@ -5,6 +5,7 @@ Repositorio de la práctica de la asignatura de SIGBI de 4º de Ingeniería Info
 Instrucciones para ejecutar la aplicación una vez descargado el contenido del repositorio
 Es importante hacer todo en el orden indicado para no tener problemas
 - Base de datos (instrucciones para hacerlo con Neo4j Desktop):
+
 1 - En primer lugar, hay que instalar Neo4j desde la página https://neo4j.com/download-v2/
 La versión con la que está probada la aplicación es la 4.1.1 (importante)
 
@@ -17,6 +18,7 @@ La versión con la que está probada la aplicación es la 4.1.1 (importante)
 5 - En principio, estaría la base cargada. Para que funcione la aplicación, hay que dejar abierta la base de Neo4j. 
 (el browser no hace falta tenerlo abierto, pero sirve para ver cómo se ejecutan nuestras acciones desde la aplicación)
 
+
 - Backend
 Los pasos a seguir en este punto son fáciles:
 
@@ -27,6 +29,7 @@ Los pasos a seguir en este punto son fáciles:
 3 - Ejecutar el comando "npm install" (instalará los módulos necesarios para ejecutar la aplicación)
 
 4 - Para arrancar el back, una vez acabe la instalación, hacer "node app.js"
+
 
 
 - Frontend
