@@ -186,7 +186,25 @@ app.post('/buscarBares', function (req, res) {
         if (bar.futbol == undefined) {
           bar.futbol = "No tiene"
         }
-        bar.tapas = record.get("Tapas")
+        //Filtramos las tapas para que no salgan repeticiones
+        tapasTemp=record.get("Tapas")
+        tapasDef=[]
+        for (var t = 0; t < tapasTemp.length; t++) {
+          for (var h = 0; h<t; h++){
+            //Si aparece una tapa repetida, cambiamos su valor por un vacío
+            if (tapasTemp[h]==tapasTemp[t]&&tapasTemp[t]!=""){
+              tapasTemp[t]=""
+            }
+          } 
+        }
+        for (var i = 0; i < tapasTemp.length; i++) {
+          //Añadimos todas las tapas que no están vacías
+          if(tapasTemp[i]!=""){
+            tapasDef.push(tapasTemp[i]);
+          }
+        }
+        //bar.tapas = record.get("Tapas")
+        bar.tapas=tapasDef;
         bares.push(bar);
       }
     },
@@ -198,6 +216,7 @@ app.post('/buscarBares', function (req, res) {
       else {
 
         console.log('Se han encontrado ' + bares.length + ' bares')
+        
         for (var i = 0; i < bares.length; i++) {
           console.log("Bar: " + bares[i].name)
           console.log("Bar: " + bares[i].futbol)
